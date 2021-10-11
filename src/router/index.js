@@ -55,20 +55,20 @@ export const constantRoutes = [
     }]
   },
   {
-    path: 'student',
+    path: '/student',
     component: Layout,
-    redirect: '/student',
+    redirect: '/student/index',
     children: [{
       path: 'student',
-      name: '学生首页',
+      name: 'StudentIndex',
       component: () => import('@/views/student/index'),
       meta: { title: '学生首页', icon: 'dashboard' }
     }]
   },
   {
-    path: 'teachingTeacher',
+    path: '/teachingTeacher',
     component: Layout,
-    redirect: '/teachingTeacher',
+    redirect: '/teachingTeacher/index',
     children: [{
       path: 'teachingTeacher',
       name: '教师首页',
@@ -77,9 +77,9 @@ export const constantRoutes = [
     }]
   },
   {
-    path: 'officeTeacher',
+    path: '/officeTeacher',
     component: Layout,
-    redirect: '/officeTeacher',
+    redirect: '/officeTeacher/index',
     children: [{
       path: 'officeTeacher',
       name: '办公老师首页',
@@ -88,14 +88,26 @@ export const constantRoutes = [
     }]
   },
   {
-    path: 'otherStuff',
+    path: '/otherStuff',
     component: Layout,
-    redirect: '/otherStuff',
+    redirect: '/otherStuff/index',
     children: [{
       path: 'otherStuff',
       name: '职工首页',
       component: () => import('@/views/otherStuff/index'),
       meta: { title: '职工首页', icon: 'dashboard' }
+    }]
+  },
+
+  {
+    path: '/course',
+    component: Layout,
+    redirect: '/course/index',
+    children: [{
+      path: 'course',
+      name: '选课系统',
+      component: () => import('@/views/course/index'),
+      meta: { title: '选课系统', icon: 'dashboard' }
     }]
   },
 

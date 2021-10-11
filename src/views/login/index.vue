@@ -66,16 +66,16 @@ export default {
       callback()
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length !== 6) {
+        callback(new Error('The password must be 6 digits'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        UserCode: 'OT0001',
-        Password: '123456'
+        UserCode: '202022010101',
+        Password: '230291'
       },
       loginRules: {
         UserCode: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -111,22 +111,26 @@ export default {
           this.loading = true
           // var log = await this.$store.dispatch('user/login', this.loginForm)
           this.$store.dispatch('user/login', this.loginForm).then(response => {
-            switch (response.data.role) {
-              case '学生':
-                this.$router.push({ path: this.redirect || 'student' })
-                break
-              case '教师':
-                this.$router.push({ path: this.redirect || 'teachingTeacher' })
-                break
-              case '办公老师':
-                this.$router.push({ path: this.redirect || 'officeTeacher' })
-                break
-              case '其他职工':
-                this.$router.push({ path: this.redirect || 'otherStuff' })
-                break
-              default:
-                this.$router.push({ path: this.redirect || '/' })
+            console.log(response.data.role[0])
+            if (response.data.role.length === 1) {
+              switch (response.data.role[0]) {
+                case '学生':
+                  this.$router.push({ path: '/' })
+                  break
+                case '教师':
+                  this.$router.push({ path: '/teachingTeacher' })
+                  break
+                case '办公老师':
+                  this.$router.push({ path: '/officeTeacher' })
+                  break
+                case '其他职工':
+                  this.$router.push({ path: '/otherStuff' })
+                  break
+                default:
+                  this.$router.push({ path: '/' })
+              }
             }
+            // this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {
             console.log('err')

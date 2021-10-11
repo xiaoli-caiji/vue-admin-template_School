@@ -1,6 +1,9 @@
 <template>
   <div class="student-container">
     <div class="student-text">name: {{ name }} </div>
+    <div>
+      <el-button @click.native.prevent="browseCourse">browseCourse</el-button>
+    </div>
   </div>
 </template>
 
@@ -13,6 +16,21 @@ export default {
     ...mapGetters([
       'name', 'code', 'role'
     ])
+  },
+  methods: {
+    browseCourse() {      
+      console.log(this.$refs)
+      this.$refs.validate(async valid => {
+        if (valid) {
+          this.loading = true
+          this.$router.push({ path: '/course'})
+          // var log = await this.$store.dispatch('user/login', this.loginForm)
+          this.$store.dispatch('user/browseCourse').then(response => {
+            console.log(response)
+          })
+        }
+      })
+    }
   }
 }
 </script>

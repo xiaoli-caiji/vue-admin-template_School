@@ -37,13 +37,13 @@ const actions = {
     const { UserCode, Password } = UserInputDto
     return new Promise((resolve, reject) => {
       login({ UserCode: UserCode.trim(), Password: Password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        // const { data } = response
+        commit('SET_TOKEN', response.data)
+        setToken(state.token)
         commit('SET_NAME', response.data.name)
         commit('SET_CODE', response.data.code)
         commit('SET_ROLE', response.data.role)
-        // console.log('登入', state)
+        console.log('登入', state.token)
         resolve(response)
       }).catch(error => {
         reject(error)
@@ -56,7 +56,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-
+        // console.log('22222', state.token)
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
