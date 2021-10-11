@@ -54,6 +54,50 @@ export const constantRoutes = [
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
   },
+  {
+    path: 'student',
+    component: Layout,
+    redirect: '/student',
+    children: [{
+      path: 'student',
+      name: '学生首页',
+      component: () => import('@/views/student/index'),
+      meta: { title: '学生首页', icon: 'dashboard' }
+    }]
+  },
+  {
+    path: 'teachingTeacher',
+    component: Layout,
+    redirect: '/teachingTeacher',
+    children: [{
+      path: 'teachingTeacher',
+      name: '教师首页',
+      component: () => import('@/views/teachingTeacher/index'),
+      meta: { title: '教师首页', icon: 'dashboard' }
+    }]
+  },
+  {
+    path: 'officeTeacher',
+    component: Layout,
+    redirect: '/officeTeacher',
+    children: [{
+      path: 'officeTeacher',
+      name: '办公老师首页',
+      component: () => import('@/views/officeTeacher/index'),
+      meta: { title: '办公老师首页', icon: 'dashboard' }
+    }]
+  },
+  {
+    path: 'otherStuff',
+    component: Layout,
+    redirect: '/otherStuff',
+    children: [{
+      path: 'otherStuff',
+      name: '职工首页',
+      component: () => import('@/views/otherStuff/index'),
+      meta: { title: '职工首页', icon: 'dashboard' }
+    }]
+  },
 
   {
     path: '/example',

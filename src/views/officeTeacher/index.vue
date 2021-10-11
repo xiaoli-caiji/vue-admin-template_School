@@ -1,6 +1,6 @@
 <template>
-  <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }} </div>
+  <div class="officeTeacher-container">
+    <div class="officeTeacher-text">name: {{ name }} </div>
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Dashboard',
+  name: 'OfficeTeacherIndex',
   computed: {
     ...mapGetters([
       'name', 'code', 'role'

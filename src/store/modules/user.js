@@ -6,7 +6,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    code: '',
+    role: ''
   }
 }
 
@@ -22,21 +23,28 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+  SET_CODE: (state, code) => {
+    state.code = code
+  },
+  SET_ROLE: (state, role) => {
+    state.role = role
   }
 }
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
-    const { username, password } = userInfo
+  login({ commit }, UserInputDto) {
+    const { UserCode, Password } = UserInputDto
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({ UserCode: UserCode.trim(), Password: Password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
         setToken(data.token)
-        resolve()
+        commit('SET_NAME', response.data.name)
+        commit('SET_CODE', response.data.code)
+        commit('SET_ROLE', response.data.role)
+        // console.log('登入', state)
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -72,6 +80,7 @@ const actions = {
         resetRouter()
         commit('RESET_STATE')
         resolve()
+        // console.log('登出', state)
       }).catch(error => {
         reject(error)
       })
