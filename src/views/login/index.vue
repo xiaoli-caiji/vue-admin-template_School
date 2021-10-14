@@ -1,7 +1,6 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
       <div class="title-container">
         <h3 class="title">Login Form</h3>
       </div>
@@ -46,7 +45,6 @@
         <span style="margin-right:20px;">username: admin</span>
         <span> password: any</span>
       </div>
-
     </el-form>
   </div>
 </template>
@@ -109,28 +107,8 @@ export default {
       this.$refs.loginForm.validate(async valid => {
         if (valid) {
           this.loading = true
-          // var log = await this.$store.dispatch('user/login', this.loginForm)
           this.$store.dispatch('user/login', this.loginForm).then(response => {
-            console.log(response.data.role[0])
-            if (response.data.role.length === 1) {
-              switch (response.data.role[0]) {
-                case '学生':
-                  this.$router.push({ path: '/' })
-                  break
-                case '教师':
-                  this.$router.push({ path: '/teachingTeacher' })
-                  break
-                case '办公老师':
-                  this.$router.push({ path: '/officeTeacher' })
-                  break
-                case '其他职工':
-                  this.$router.push({ path: '/otherStuff' })
-                  break
-                default:
-                  this.$router.push({ path: '/' })
-              }
-            }
-            // this.$router.push({ path: this.redirect || '/' })
+            this.$router.push({ path: '/' })
             this.loading = false
           }).catch(() => {
             console.log('err')

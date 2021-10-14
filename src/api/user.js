@@ -23,23 +23,34 @@ export function logout() {
   })
 }
 
-export function browseCourses() {
+export function browseCourse(data) {
   return request({
     url: '/api/StudentIndex/BrowseCourse',
-    method: 'get'
+    method: 'post',
+    data
   })
 }
 
-export function chooseCourses() {
+export function chooseCourse(data) {
   return request({
-    url: '/api/StudentIndex/ChooseCourse',
-    method: 'post'
+    url: '/api/StudentIndex/ChoosenCourse',
+    method: 'post',
+    data
   })
 }
 
-export function getReportCard() {
+// export function hasChoosen(data) {
+//   return request({
+//     url: '/api/StudentIndex/HasChoosen',
+//     method: 'get',
+//     data
+//   })
+// }
+
+export function getReportCard(data) {
   return request({
     url: '/api/StudentIndex/GetReportCard',
-    method: 'get'
+    method: 'get',
+    data
   })
 }

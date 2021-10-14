@@ -1,6 +1,8 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, browseCourse, chooseCourse } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import ElementUI from 'element-ui'
+// import { resolve } from 'core-js/fn/promise'
 
 const getDefaultState = () => {
   return {
@@ -37,13 +39,12 @@ const actions = {
     const { UserCode, Password } = UserInputDto
     return new Promise((resolve, reject) => {
       login({ UserCode: UserCode.trim(), Password: Password }).then(response => {
-        // const { data } = response
-        commit('SET_TOKEN', response.data)
+        commit('SET_TOKEN', response.data.code)
         setToken(state.token)
         commit('SET_NAME', response.data.name)
         commit('SET_CODE', response.data.code)
         commit('SET_ROLE', response.data.role)
-        console.log('登入', state.token)
+        ElementUI.Message.info(response.content)
         resolve(response)
       }).catch(error => {
         reject(error)
@@ -56,13 +57,10 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-        // console.log('22222', state.token)
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
-
         const { name, avatar } = data
-
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)
@@ -80,7 +78,29 @@ const actions = {
         resetRouter()
         commit('RESET_STATE')
         resolve()
-        // console.log('登出', state)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  browseCourse({ commit }, CourseInputDto) {
+    const { AcademicName, CourseName, TeachingTeacher } = CourseInputDto
+    return new Promise((resolve, reject) => {
+      browseCourse({ AcademicName: AcademicName.trim(), CourseName: CourseName.trim(), TeachingTeacher: TeachingTeacher.trim(), UserCode: state.code }).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  chooseCourse({ commit }, courseCode) {
+    return new Promise((resolve, reject) => {
+      chooseCourse({ CourseCode: courseCode, UserCode: state.code }).then(response => {
+        // console.log(response)
+        ElementUI.Message.info(response.content)
+        resolve(response)
       }).catch(error => {
         reject(error)
       })

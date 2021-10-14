@@ -58,8 +58,9 @@ export const constantRoutes = [
     path: '/student',
     component: Layout,
     redirect: '/student/index',
+    roles: ['学生'],
     children: [{
-      path: 'student',
+      path: 'index',
       name: 'StudentIndex',
       component: () => import('@/views/student/index'),
       meta: { title: '学生首页', icon: 'dashboard' }
@@ -68,9 +69,10 @@ export const constantRoutes = [
   {
     path: '/teachingTeacher',
     component: Layout,
+    roles: ['教师'],
     redirect: '/teachingTeacher/index',
     children: [{
-      path: 'teachingTeacher',
+      path: 'index',
       name: '教师首页',
       component: () => import('@/views/teachingTeacher/index'),
       meta: { title: '教师首页', icon: 'dashboard' }
@@ -80,8 +82,9 @@ export const constantRoutes = [
     path: '/officeTeacher',
     component: Layout,
     redirect: '/officeTeacher/index',
+    roles: ['办公老师'],
     children: [{
-      path: 'officeTeacher',
+      path: 'index',
       name: '办公老师首页',
       component: () => import('@/views/officeTeacher/index'),
       meta: { title: '办公老师首页', icon: 'dashboard' }
@@ -91,8 +94,9 @@ export const constantRoutes = [
     path: '/otherStuff',
     component: Layout,
     redirect: '/otherStuff/index',
+    roles: ['其他职工'],
     children: [{
-      path: 'otherStuff',
+      path: 'index',
       name: '职工首页',
       component: () => import('@/views/otherStuff/index'),
       meta: { title: '职工首页', icon: 'dashboard' }
@@ -103,11 +107,25 @@ export const constantRoutes = [
     path: '/course',
     component: Layout,
     redirect: '/course/index',
+    roles: ['学生'],
     children: [{
-      path: 'course',
+      path: 'index',
       name: '选课系统',
       component: () => import('@/views/course/index'),
       meta: { title: '选课系统', icon: 'dashboard' }
+    }]
+  },
+
+  {
+    path: '/reportCard',
+    component: Layout,
+    redirect: '/reportCard/index',
+    roles: ['学生'],
+    children: [{
+      path: 'index',
+      name: '我的成绩单',
+      component: () => import('@/views/reportCard/index'),
+      meta: { title: '成绩单查询', icon: 'table' }
     }]
   },
 

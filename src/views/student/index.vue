@@ -18,18 +18,10 @@ export default {
     ])
   },
   methods: {
-    browseCourse() {      
-      console.log(this.$refs)
-      this.$refs.validate(async valid => {
-        if (valid) {
-          this.loading = true
-          this.$router.push({ path: '/course'})
-          // var log = await this.$store.dispatch('user/login', this.loginForm)
-          this.$store.dispatch('user/browseCourse').then(response => {
-            console.log(response)
-          })
-        }
-      })
+    browseCourse() {
+      this.loading = true
+      this.$router.push({ path: '/course' })
+      // var log = await this.$store.dispatch('user/login', this.loginForm)
     }
   }
 }
