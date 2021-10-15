@@ -121,7 +121,7 @@ const actions = {
   },
 
   getStudentAndCourse({ commit }) {
-    var url = '/api/TeacherIndex/InputReportCard?' + 'teacherCode=' + state.code
+    var url = '/api/TeacherIndex/CourseAndStudent?' + 'teacherCode=' + state.code
     return new Promise((resolve, reject) => {
       getStudentAndCourse(url).then(response => {
         ElementUI.Message.info(response.content)

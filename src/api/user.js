@@ -39,9 +39,9 @@ export function chooseCourse(data) {
   })
 }
 
-export function getStudentAndCourse(url) {
+export function getStudentAndCourse(urll) {
   return request({
-    url: url,
+    url: urll,
     method: 'get'
   })
 }

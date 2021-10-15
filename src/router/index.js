@@ -130,6 +130,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/getStudent',
+    component: Layout,
+    redirect: '/reportCard/writeIn',
+    roles: ['教师'],
+    children: [{
+      path: 'writeIn',
+      name: '成绩录入',
+      component: () => import('@/views/reportCard/writeIn'),
+      meta: { title: '成绩录入', icon: 'table' }
+    }]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',

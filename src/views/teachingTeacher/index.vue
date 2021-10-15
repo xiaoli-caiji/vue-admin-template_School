@@ -1,6 +1,10 @@
 <template>
   <div class="teachingTeacher-container">
     <div class="teachingTeacher-text">name: {{ name }} </div>
+    <div class="report">
+      <el-button @click.native.prevent="gotoReportCard">录入成绩</el-button>
+    </div>
+
   </div>
 </template>
 
@@ -13,6 +17,11 @@ export default {
     ...mapGetters([
       'name', 'code', 'role'
     ])
+  },
+  methods: {
+    gotoReportCard() {
+      this.$router.push({ path: '/getStudent' })
+    }
   }
 }
 </script>
