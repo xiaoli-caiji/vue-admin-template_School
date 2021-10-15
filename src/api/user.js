@@ -47,10 +47,9 @@ export function chooseCourse(data) {
 //   })
 // }
 
-export function getReportCard(data) {
+export function getReportCard(urll) {
   return request({
-    url: '/api/StudentIndex/GetReportCard',
-    method: 'get',
-    data
+    url: urll,
+    method: 'get'
   })
 }

@@ -1,7 +1,8 @@
-import { login, logout, getInfo, browseCourse, chooseCourse } from '@/api/user'
+import { login, logout, getInfo, browseCourse, chooseCourse, getReportCard } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import ElementUI from 'element-ui'
+// import { reject, resolve } from 'core-js/fn/promise'
 // import { resolve } from 'core-js/fn/promise'
 
 const getDefaultState = () => {
@@ -99,6 +100,18 @@ const actions = {
     return new Promise((resolve, reject) => {
       chooseCourse({ CourseCode: courseCode, UserCode: state.code }).then(response => {
         // console.log(response)
+        ElementUI.Message.info(response.content)
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  getReportCard({ commit }) {
+    var url = '/api/StudentIndex/GetReportCard?' + 'urlCode=' + state.code
+    return new Promise((resolve, reject) => {
+      getReportCard(url).then(response => {
         ElementUI.Message.info(response.content)
         resolve(response)
       }).catch(error => {

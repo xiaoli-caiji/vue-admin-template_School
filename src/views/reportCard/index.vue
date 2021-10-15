@@ -1,24 +1,24 @@
 <template>
-  <div class="reportCard-container">    
+  <div class="reportCard-container">
     <el-table
       v-loading="listLoading"
-      :data="list"
       element-loading-text="Loading"
       border
-      lazy
       fit
       highlight-current-row
     >
-      <el-table-column label="课程名" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.courseName }}
-        </template>
-      </el-table-column>
-      <el-table-column label="课程编号" align="center">
+      <my-slot>
+        <el-table-column label="课程名" align="center">
+          <template slot-scope="scope">
+            {{ scope.courseName.row }}
+          </template>
+        </el-table-column>
+      </my-slot>
+      <!-- <el-table-column label="课程编号" align="center">
         <template slot-scope="scope">
           {{ scope.row.courseCode }}
         </template>
-      </el-table-column>     
+      </el-table-column>
       <el-table-column label="学分" align="center">
         <template slot-scope="scope">
           {{ scope.row.courseCredit }}
@@ -28,35 +28,31 @@
         <template slot-scope="scope">
           {{ scope.row.Grades }}
         </template>
-      </el-table-column>   
+      </el-table-column> -->
     </el-table>
-    <div>
-        <el-card aria-label="已获得学分">
-            <template slot-scope="scope">
-                {{ scope.GetGrades }}
-            </template>
-        </el-card>
-    </div>
+    <!-- <div>
+      <el-card aria-label="已获得学分">
+        <template slot-scope="scope">
+          {{ scope.row.GetGrades }}
+        </template>
+      </el-card>
+    </div> -->
   </div>
 </template>
 
 <script>
-// import user from '@/store/modules/user'
+
+import mySlot from './mySlot'
+import MySlot from './mySlot.vue'
 
 export default {
   // el: '#App',
   name: 'Course',
   data() {
     return {
-      quereForm: {
-        AcademicName: '信通',
-        CourseName: '',
-        TeachingTeacher: '',
-        buttonLoading: false
-      },
       list: [],
-      listLoading: false,
-      courseCode: ''
+      list2: [],
+      listLoading: false
     }
   },
   watch: {
@@ -67,18 +63,26 @@ export default {
       immediate: true
     }
   },
-  methods: {
-    quere() {
-      this.loading = true
-      this.$store.dispatch('user/browseCourse', this.quereForm).then(response => {
-        this.list = response.data
-        this.loading = false
-      }).catch(() => {
-        console.log('err')
-        this.loading = false
-      })
-    }
+  components: {
+    mySlot
   }
+  // mounted: function() {
+  //   this.checkReportCard()
+  // },
+  // methods: {
+  //   checkReportCard() {
+  //     this.loading = true
+  //     this.$store.dispatch('user/getReportCard').then(response => {
+  //       this.list = response.data
+  //       this.list2 = response.data.courseName
+  //       console.log(this.list2)
+  //       this.loading = false
+  //     }).catch(() => {
+  //       console.log('查询失败！')
+  //       this.loading = false
+  //     })
+  //   }
+  // }
 }
 </script>
 
