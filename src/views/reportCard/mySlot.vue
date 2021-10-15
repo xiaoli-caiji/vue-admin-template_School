@@ -1,8 +1,8 @@
 <template>
   <div>
-    <slot v-bind="courseName">
-        {{ courseName.data }}
+    <slot :courseName="courseName" name="courseName">
     </slot>
+  </div>
 </template>
 
 <script>
@@ -15,28 +15,24 @@ export default {
       gotGrades: 0,
       gpa: 0,
       grades: [],
-      requiredGrades: 0,
-    };
+      requiredGrades: 0
+    }
   },
-  mounted: function () {
-    this.checkReportCard();
+  mounted: function() {
+    this.checkReportCard()
   },
   methods: {
     checkReportCard() {
-      this.loading = true;
-      this.$store
-        .dispatch("user/getReportCard")
-        .then((response) => {
-          this.list = response.data;
-          this.list2 = response.data.courseName;
-          console.log(this.list2);
-          this.loading = false;
-        })
-        .catch(() => {
-          console.log("查询失败！");
-          this.loading = false;
-        });
-    },
-  },
-};
+      this.loading = true
+      this.$store.dispatch('user/getReportCard').then((response) => {
+        this.courseName = response.data.courseName
+        console.log(this.courseName)
+        this.loading = false
+      }).catch(() => {
+        console.log('查询失败!')
+        this.loading = false
+      })
+    }
+  }
+}
 </script>

@@ -145,6 +145,7 @@ export default {
       this.loading = true
       this.$store.dispatch('user/browseCourse', this.quereForm).then(response => {
         this.list = response.data
+        console.log(response)
         this.loading = false
       }).catch(() => {
         console.log('err')
