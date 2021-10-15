@@ -1,4 +1,4 @@
-import { login, logout, getInfo, browseCourse, chooseCourse, getReportCard } from '@/api/user'
+import { login, logout, getInfo, browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import ElementUI from 'element-ui'
@@ -113,6 +113,30 @@ const actions = {
     return new Promise((resolve, reject) => {
       getReportCard(url).then(response => {
         ElementUI.Message.info(response.content)
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  getStudentAndCourse({ commit }) {
+    var url = '/api/TeacherIndex/InputReportCard?' + 'teacherCode=' + state.code
+    return new Promise((resolve, reject) => {
+      getStudentAndCourse(url).then(response => {
+        ElementUI.Message.info(response.content)
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  WriteInReportCard({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      writeInReportCard(data).then(response => {
+        // data是list，返回的结果也是，把结果直接返回到表格的备注一栏里
+        // ElementUI.Message.info(response.content)
         resolve(response)
       }).catch(error => {
         reject(error)

@@ -39,13 +39,20 @@ export function chooseCourse(data) {
   })
 }
 
-// export function hasChoosen(data) {
-//   return request({
-//     url: '/api/StudentIndex/HasChoosen',
-//     method: 'get',
-//     data
-//   })
-// }
+export function getStudentAndCourse(url) {
+  return request({
+    url: url,
+    method: 'get'
+  })
+}
+
+export function writeInReportCard(data) {
+  return request({
+    url: '/api/TeacherIndex/InputReportCard',
+    method: 'post',
+    data
+  })
+}
 
 export function getReportCard(urll) {
   return request({

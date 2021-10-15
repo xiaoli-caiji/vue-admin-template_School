@@ -72,8 +72,8 @@ export default {
     }
     return {
       loginForm: {
-        UserCode: '202022010101',
-        Password: '230291'
+        UserCode: 'TT0001',
+        Password: '111111'
       },
       loginRules: {
         UserCode: [{ required: true, trigger: 'blur', validator: validateUsername }],
