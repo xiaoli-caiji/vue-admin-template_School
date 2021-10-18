@@ -1,4 +1,5 @@
 import { login, logout, getInfo, browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse } from '@/api/user'
+import { studentRegistration, teachingTeacherRegistration, otherStuffRegistration, officeTeacherRegistration } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import ElementUI from 'element-ui'
@@ -129,6 +130,45 @@ const actions = {
       }).catch(error => {
         reject(error)
       })
+    })
+  },
+
+  userRegister({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      switch (data.userRole) {
+        case '学生':
+          studentRegistration(data).then(response => {
+            ElementUI.Message.info(response.content)
+            resolve(response)
+          }).catch(error => {
+            reject(error)
+          })
+          break
+        case '教师':
+          teachingTeacherRegistration(data).then(response => {
+            ElementUI.Message.info(response.content)
+            resolve(response)
+          }).catch(error => {
+            reject(error)
+          })
+          break
+        case '办公老师':
+          officeTeacherRegistration(data).then(response => {
+            ElementUI.Message.info(response.content)
+            resolve(response)
+          }).catch(error => {
+            reject(error)
+          })
+          break
+        case '其他职工':
+          otherStuffRegistration(data).then(response => {
+            ElementUI.Message.info(response.content)
+            resolve(response)
+          }).catch(error => {
+            reject(error)
+          })
+          break
+      }
     })
   },
 

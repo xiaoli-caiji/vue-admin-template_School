@@ -23,6 +23,34 @@ export function logout() {
   })
 }
 
+export function studentRegistration() {
+  return request({
+    url: '/api/UserRegistration/StudentRegistration',
+    method: 'post'
+  })
+}
+
+export function teachingTeacherRegistration() {
+  return request({
+    url: '/api/UserRegistration/TeachingTeacherRegistration',
+    method: 'post'
+  })
+}
+
+export function officeTeacherRegistration() {
+  return request({
+    url: '/api/UserRegistration/officeTeacherRegistration',
+    method: 'post'
+  })
+}
+
+export function otherStuffRegistration() {
+  return request({
+    url: '/api/UserRegistration/OtherStuffRegistration',
+    method: 'post'
+  })
+}
+
 export function browseCourse(data) {
   return request({
     url: '/api/StudentIndex/BrowseCourse',

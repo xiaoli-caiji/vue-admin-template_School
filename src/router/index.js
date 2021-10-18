@@ -117,6 +117,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/userRegister',
+    component: Layout,
+    redirect: '/userRegister/index',
+    roles: ['办公老师'],
+    children: [{
+      path: 'index',
+      name: '用户管理系统',
+      component: () => import('@/views/userRegister/index'),
+      meta: { title: '用户管理系统', icon: 'dashboard' }
+    }]
+  },
+
+  {
     path: '/reportCard',
     component: Layout,
     redirect: '/reportCard/index',

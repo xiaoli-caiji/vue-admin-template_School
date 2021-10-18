@@ -1,33 +1,40 @@
 <template>
   <div class="courseList">
-    <el-tabs v-model="courseName" type="card" @click="handleClick(courseName)">
+    <el-tabs type="card">
       <el-tab-pane
-        v-for="(item, index) in courseName"
+        v-for="(item, index) in studentList"
         :key="index"
-        :label="item"
+        :label="item.courseName"
       >
         <!-- {{ '内容' }} -->
-        <el-form ref="writeInForm" :model="writeInForm">
+        <el-form ref="writeInForm" :model="writeInForm" @submit.native.prevent>
           <el-table
-            :data="studentList"
+            :data="item.students"
             border
             fit
             highlight-current-row
           >
             <el-table-column align="center" label="学生姓名">
               <template slot-scope="scope">
-                  {{ scope.row[index].name }}
+                {{ scope.row.name }}
               </template>
             </el-table-column>
             <el-table-column align="center" label="学生编号">
               <template slot-scope="scope">
-                  {{ scope.row.userCode }}
+                {{ scope.row.userCode }}
               </template>
             </el-table-column>
             <el-table-column align="center" label="成绩">
-              <el-input type="text" ref="reportCard[index]" />
+              <template slot-scope="scope">
+                <el-input
+                  ref="grades"
+                  v-model="gradesObj[item.courseName+scope.row.userCode]"
+                  type="number"
+                />
+              </template>
             </el-table-column>
           </el-table>
+          <el-button @click.native.prevent="inputReportCard(index)">录入</el-button>
         </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -39,11 +46,10 @@
 export default {
   data() {
     return {
-      writeInForm: {
-        reportCard: []
-      },
-      courseName: [],
-      studentList: []
+      writeInForm: {},
+      studentList: [],
+      gradesObj: {},
+      grades: []
     }
   },
   watch: {
@@ -58,24 +64,32 @@ export default {
     this.getStudentAndCourse()
   },
   methods: {
-    // handleClick(courseName) {
-    //     if()
-
-    // },
     getStudentAndCourse() {
       this.$store.dispatch('user/getStudentAndCourse').then(response => {
-        console.log(response.data)
-        this.courseName = response.data.courses
-        this.courseName.forEach(c => {
-          response.data.courseAndStudents.forEach(cas => {
-            if (c === cas.courseName) {
-              this.studentList = cas.students
-              console.log(this.studentList)
-            }
-          })
-        })
+        this.studentList = response.data.courseAndStudents
+        // console.log(this.studentList)
       }).catch(() => {
         console.log('请求失败！')
+      })
+    },
+    inputReportCard(index) {
+      // this.writeInForm
+      var item = this.studentList[index]
+      this.grades = []
+      item.students.forEach(element => {
+        this.grades.push(
+          {
+            CourseName: item.courseName,
+            StudentCode: element.userCode,
+            StudentName: element.name,
+            Grades: this.gradesObj[item.courseName + element.userCode]
+          }
+        )
+      })
+      this.$store.dispatch('user/WriteInReportCard', this.grades).then(response => {
+        console.log(response)
+      }).catch(() => {
+        console.log('录入失败！')
       })
     }
   }
