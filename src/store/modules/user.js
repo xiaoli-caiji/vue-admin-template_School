@@ -1,6 +1,6 @@
 import { login, logout, getInfo, browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse } from '@/api/user'
 import { studentRegistration, teachingTeacherRegistration, otherStuffRegistration, officeTeacherRegistration } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import ElementUI from 'element-ui'
 // import { reject, resolve } from 'core-js/fn/promise'
@@ -23,6 +23,7 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token
+    localStorage.token = token
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -38,16 +39,13 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, UserInputDto) {
-    const { UserCode, Password } = UserInputDto
+    console.log(UserInputDto)
+    // const { UserCode, Password } = UserInputDto
     return new Promise((resolve, reject) => {
-      login({ UserCode: UserCode.trim(), Password: Password }).then(response => {
-        commit('SET_TOKEN', response.data.code)
+      login(UserInputDto).then((res) => {
+        commit('SET_TOKEN', res.access_token)
         setToken(state.token)
-        commit('SET_NAME', response.data.name)
-        commit('SET_CODE', response.data.code)
-        commit('SET_ROLE', response.data.role)
-        ElementUI.Message.info(response.content)
-        resolve(response)
+        resolve(res)
       }).catch(error => {
         reject(error)
       })
@@ -57,15 +55,16 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-        if (!data) {
+      getInfo(state.token).then(res => {
+        if (!res) {
           return reject('Verification failed, please Login again.')
         }
-        const { name, avatar } = data
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
+        commit('SET_NAME', res.name)
+        commit('SET_CODE', res.sub)
+        var roles = JSON.parse(res.roles)
+        commit('SET_ROLE', roles)
+        console.log(res)
+        resolve(res)
       }).catch(error => {
         reject(error)
       })
@@ -135,8 +134,11 @@ const actions = {
 
   userRegister({ commit }, data) {
     return new Promise((resolve, reject) => {
+      console.log(data.userRole)
+      console.log(data)
       switch (data.userRole) {
         case '学生':
+          console.log(111111111)
           studentRegistration(data).then(response => {
             ElementUI.Message.info(response.content)
             resolve(response)

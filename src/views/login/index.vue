@@ -4,15 +4,15 @@
       <div class="title-container">
         <h3 class="title">Login Form</h3>
       </div>
-      <el-form-item prop="UserCode">
+      <el-form-item prop="UserName">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="UserCode"
-          v-model="loginForm.UserCode"
-          placeholder="UserCode"
-          name="UserCode"
+          ref="UserName"
+          v-model="loginForm.UserName"
+          placeholder="UserName"
+          name="UserName"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -42,7 +42,7 @@
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
+        <span style="margin-right:20px;">UserName: admin</span>
         <span> password: any</span>
       </div>
     </el-form>
@@ -50,13 +50,15 @@
 </template>
 
 <script>
-// import { validUsername } from '@/utils/validate'
+import store from '@/store'
+import ElementUI from 'element-ui'
+// import { validUserCode } from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      // if (!validUsername(value)) {
+    const validateUserCode = (rule, value, callback) => {
+      // if (!validUserCode(value)) {
       //   callback(new Error('Please enter the correct user name'))
       // } else {
       //   callback()
@@ -72,11 +74,14 @@ export default {
     }
     return {
       loginForm: {
-        UserCode: 'OT0001',
-        Password: '123456'
+        UserName: '202022010102',
+        ClientId: 'ro.client',
+        ClientSecrets: 'secret',
+        GrantType: 'password',
+        Password: '222222'
       },
       loginRules: {
-        UserCode: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        UserName: [{ required: true, trigger: 'blur', validator: validateUserCode }],
         Password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
@@ -107,8 +112,20 @@ export default {
       this.$refs.loginForm.validate(async valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(response => {
-            this.$router.push({ path: '/' })
+          const params = new URLSearchParams()
+          params.append('UserName', this.loginForm.UserName)
+          params.append('client_id', this.loginForm.ClientId)
+          params.append('client_secret', this.loginForm.ClientSecrets)
+          params.append('grant_type', this.loginForm.GrantType)
+          params.append('password', this.loginForm.Password)
+          this.$store.dispatch('user/login', params).then((res) => {
+            if (store.state.user.token) {
+              alert(1)
+              this.$store.dispatch('user/getInfo', store.state.user.token).then((res) => {
+                this.$router.push({ path: '/' })
+              })
+              ElementUI.Message.info('登陆成功！')
+            }
             this.loading = false
           }).catch(() => {
             console.log('err')

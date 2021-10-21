@@ -2,7 +2,11 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/api/Account/Login',
+    url: '/connect/token',
+    headers: {
+      // 'Content-Type': 'application/x-www-form-urlencoded'
+      // 'Access-Control-Allow-Origin': 'https://localhost:13001'
+    },
     method: 'post',
     data
   })
@@ -10,9 +14,13 @@ export function login(data) {
 
 export function getInfo(token) {
   return request({
-    url: '/api/Account/Login',
-    method: 'post',
-    params: { token }
+    url: '/connect/userinfo',
+    method: 'get',
+    // params: { token },
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Access-Control-Allow-Origin': 'https://localhost:13001'
+    }
   })
 }
 
@@ -23,31 +31,35 @@ export function logout() {
   })
 }
 
-export function studentRegistration() {
+export function studentRegistration(data) {
   return request({
     url: '/api/UserRegistration/StudentRegistration',
-    method: 'post'
+    method: 'post',
+    data
   })
 }
 
-export function teachingTeacherRegistration() {
+export function teachingTeacherRegistration(data) {
   return request({
     url: '/api/UserRegistration/TeachingTeacherRegistration',
-    method: 'post'
+    method: 'post',
+    data
   })
 }
 
-export function officeTeacherRegistration() {
+export function officeTeacherRegistration(data) {
   return request({
     url: '/api/UserRegistration/officeTeacherRegistration',
-    method: 'post'
+    method: 'post',
+    data
   })
 }
 
-export function otherStuffRegistration() {
+export function otherStuffRegistration(data) {
   return request({
     url: '/api/UserRegistration/OtherStuffRegistration',
-    method: 'post'
+    method: 'post',
+    data
   })
 }
 
