@@ -125,6 +125,7 @@ export default {
             console.log(111111)
             if (store.state.user.token) {
               this.$store.dispatch('user/getInfo', store.state.user.token).then((res) => {
+                console.log(res)
                 this.$router.push({ path: '/' })
               })
               ElementUI.Message.info('登陆成功！')

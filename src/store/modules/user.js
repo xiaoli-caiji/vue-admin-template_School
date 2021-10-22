@@ -1,9 +1,9 @@
-import { login, logout, getInfo, browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse } from '@/api/user'
+import { login, logout, getInfo, browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse, selfSetting } from '@/api/user'
 import { studentRegistration, teachingTeacherRegistration, otherStuffRegistration, officeTeacherRegistration } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import ElementUI from 'element-ui'
-// import { reject, resolve } from 'core-js/fn/promise'
+// import { reject } from 'core-js/fn/promise'
 // import { resolve } from 'core-js/fn/promise'
 
 const getDefaultState = () => {
@@ -79,9 +79,9 @@ const actions = {
         var roles = JSON.parse(res.role)
         commit('SET_ROLE', roles)
         commit('SET_GENDER', res.gender)
-        commit('SET_PHONENUM', res.phonenumber)
+        commit('SET_PHONENUM', res.phone_number)
         commit('SET_BIRTHDATE', res.birthdate)
-        commit('SET_HEADIMG', res.headimg)
+        commit('SET_HEADIMG', res.picture)
         resolve(res)
       }).catch(error => {
         reject(error)
@@ -89,14 +89,28 @@ const actions = {
     })
   },
 
-  savePassword({ commit }, password) {
+  async savePassword({ commit }, password) {
+    try {
+      return new Promise((resolve, reject) => {
+        commit('SET_PASSWORD', password)
+        resolve(password)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+  saveChange({ commit }, Dto) {
     return new Promise((resolve, reject) => {
-      commit('SET_PASSWORD', password)
-      resolve(password)
-    }).catch(error => {
-      reject(error)
+      selfSetting(Dto).then(response => {
+        console.log(222222222)
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
+
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {

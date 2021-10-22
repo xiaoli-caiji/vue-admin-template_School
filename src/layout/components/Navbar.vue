@@ -59,7 +59,7 @@ export default {
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     },
     async selfSetting() {
-      this.$router.push()
+      this.$router.push('/setting')
     }
   }
 }
