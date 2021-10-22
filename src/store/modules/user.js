@@ -33,16 +33,31 @@ const mutations = {
   },
   SET_ROLE: (state, role) => {
     state.role = role
+  },
+  SET_GENDER: (state, gender) => {
+    state.gender = gender
+  },
+  SET_BIRTHDATE: (state, birthDate) => {
+    state.birthDate = birthDate
+  },
+  SET_PHONENUM: (state, phoneNumber) => {
+    state.phoneNumber = phoneNumber
+  },
+  SET_HEADIMG: (state, headImg) => {
+    state.headImg = headImg
+  },
+  SET_PASSWORD: (state, password) => {
+    state.password = password
   }
 }
 
 const actions = {
   // user login
   login({ commit }, UserInputDto) {
-    console.log(UserInputDto)
     // const { UserCode, Password } = UserInputDto
     return new Promise((resolve, reject) => {
-      login(UserInputDto).then((res) => {
+      login(UserInputDto).then(res => {
+        console.log(res)
         commit('SET_TOKEN', res.access_token)
         setToken(state.token)
         resolve(res)
@@ -61,9 +76,12 @@ const actions = {
         }
         commit('SET_NAME', res.name)
         commit('SET_CODE', res.sub)
-        var roles = JSON.parse(res.roles)
+        var roles = JSON.parse(res.role)
         commit('SET_ROLE', roles)
-        console.log(res)
+        commit('SET_GENDER', res.gender)
+        commit('SET_PHONENUM', res.phonenumber)
+        commit('SET_BIRTHDATE', res.birthdate)
+        commit('SET_HEADIMG', res.headimg)
         resolve(res)
       }).catch(error => {
         reject(error)
@@ -71,6 +89,14 @@ const actions = {
     })
   },
 
+  savePassword({ commit }, password) {
+    return new Promise((resolve, reject) => {
+      commit('SET_PASSWORD', password)
+      resolve(password)
+    }).catch(error => {
+      reject(error)
+    })
+  },
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {

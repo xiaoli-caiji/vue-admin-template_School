@@ -39,6 +39,8 @@
         </span>
       </el-form-item>
 
+      <el-radio v-model="radio" label="1" @change="savePassword">记住密码</el-radio>
+
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
       <div class="tips">
@@ -78,7 +80,8 @@ export default {
         ClientId: 'ro.client',
         ClientSecrets: 'secret',
         GrantType: 'password',
-        Password: '222222'
+        Password: '222222',
+        radio: '1'
       },
       loginRules: {
         UserName: [{ required: true, trigger: 'blur', validator: validateUserCode }],
@@ -118,9 +121,9 @@ export default {
           params.append('client_secret', this.loginForm.ClientSecrets)
           params.append('grant_type', this.loginForm.GrantType)
           params.append('password', this.loginForm.Password)
-          this.$store.dispatch('user/login', params).then((res) => {
+          this.$store.dispatch('user/login', params).then(res => {
+            console.log(111111)
             if (store.state.user.token) {
-              alert(1)
               this.$store.dispatch('user/getInfo', store.state.user.token).then((res) => {
                 this.$router.push({ path: '/' })
               })
@@ -135,6 +138,12 @@ export default {
           console.log('error submit!!')
           return false
         }
+      })
+    },
+    savePassword() {
+      this.$store.dispatch('user/savePassword', this.loginForm.Password).then(response => {
+      }).catch(() => {
+        console.log('记住密码失败！')
       })
     }
   }

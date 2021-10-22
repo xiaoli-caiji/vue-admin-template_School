@@ -54,6 +54,19 @@ export const constantRoutes = [
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
   },
+
+  {
+    path: '/setting',
+    component: Layout,
+    redirect: '/setting/index',
+    children: [{
+      path: 'index',
+      name: 'SelfSetting',
+      component: () => import('@/views/setting/index'),
+      meta: { title: '自定义', icon: 'user' }
+    }]
+  },
+
   {
     path: '/student',
     component: Layout,

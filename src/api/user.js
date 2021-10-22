@@ -31,6 +31,14 @@ export function logout() {
   })
 }
 
+export function selfSetting(data) {
+  return request({
+    url: '/api/UserSelfSetting/Settings',
+    method: 'post',
+    data
+  })
+}
+
 export function studentRegistration(data) {
   return request({
     url: '/api/UserRegistration/StudentRegistration',
