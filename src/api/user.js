@@ -34,6 +34,9 @@ export function logout() {
 export function selfSetting(data) {
   return request({
     url: '/api/UserSelfSetting/Settings',
+    // headers: {
+    //   'Content-Type': 'multipart/form-data'
+    // },
     method: 'post',
     data
   })

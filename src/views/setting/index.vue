@@ -1,7 +1,7 @@
 <template>
   <div class="selfSetting-container">
-    <el-form model="selfSettingForm" class="selfSetting-form" auto-complete="on" label-position="left">
-      <el-form-item prop="Name">
+    <el-form :model="selfSettingForm" class="selfSetting-form" auto-complete="on" label-position="left">
+      <el-form-item>
         姓名：<el-input
           ref="Name"
           v-model="selfSettingForm.Name"
@@ -11,7 +11,7 @@
           auto-complete="on"
         />
       </el-form-item>
-      <el-form-item prop="Gender">
+      <el-form-item>
         性别：<el-input
           ref="Gender"
           v-model="selfSettingForm.Gender"
@@ -21,7 +21,7 @@
           auto-complete="on"
         />
       </el-form-item>
-      <el-form-item prop="PhoneNumber">
+      <el-form-item>
         手机号：<el-input
           ref="PhoneNumber"
           v-model="selfSettingForm.PhoneNumber"
@@ -32,41 +32,38 @@
         />
       </el-form-item>
       <el-form-item prop="HeadImg">
-        <!-- 头像：<el-input
-          ref="HeadImg"
-          v-model="selfSettingForm.HeadImg"
-          name="HeadImg"
-          type="file"
-          tabindex="5"
-          auto-complete="on"
-          accept="image/*"
-        /> -->
-        <el-upload
+        原头像:<img
+          width="100%"
+          :src="headImg"
+        >
+        新头像：<el-upload
+          ref="uploadExcel"
           name="headPicture"
           action="https://localhost:13001/api/UserSelfSetting/ReceiveHeadImg"
           accept="image/*"
-          :auto-upload="true"
+          :auto-upload="false"
+          :headers="header"
           :multiple="false"
+          :limit="1"
           :before-upload="beforeUploadFile"
+          :on-change="fileChange"
         >
-          <i class="el-icon-plus" />
+          <i class="el-icon-plus">
+            <img width="100%" :src="HeadPicture">
+          </i>
         </el-upload>
       </el-form-item>
       <el-form-item>
-        <el-button size="small" type="primary" @click="uploadFile">立即上传</el-button>
-        <el-button size="small">取消</el-button>
-      </el-form-item>
-      <el-form-item prop="BirthDate">
-        生日：<el-input
+        生日：<el-date-picker
           ref="BirthDate"
           v-model="selfSettingForm.BirthDate"
           name="BirthDate"
           type="date"
           tabindex="6"
-          auto-complete="on"
         />
       </el-form-item>
       <el-button @click.native.prevent="saveChange">确认修改</el-button>
+      <el-button @click.native.prevent="backHome">取消</el-button>
     </el-form>
   </div>
 </template>
@@ -81,11 +78,14 @@ export default {
       selfSettingForm: {
         Name: '',
         Gender: '',
-        BirthDate: new Date(),
+        BirthDate: '',
         HeadImg: '',
         UserCode: '',
         PhoneNumber: ''
-      }
+      },
+      f: new FormData(),
+      HeadPicture: '',
+      header: { Authorization: window.sessionStorage.getItem('token') }
     }
   },
   computed: {
@@ -106,33 +106,40 @@ export default {
       this.selfSettingForm.UserCode = this.code
       this.selfSettingForm.Name = this.name
       this.selfSettingForm.Gender = this.gender
-      this.selfSettingForm.HeadImg = this.headImg
+      if (this.HeadPicture === '') {
+        this.selfSettingForm.HeadImg = null
+      } else {
+        this.selfSettingForm.HeadImg = this.headImg
+      }
       this.selfSettingForm.PhoneNumber = this.phoneNumber
       this.selfSettingForm.BirthDate = this.birthDate
     },
-    handleFile(event) {
-      this.selfSettingForm.HeadImg = event.target.files[0]
+    fileChange(file) {
+      var that = this
+      const reader = new FileReader()
+      var img = ''
+      reader.readAsDataURL(file.raw)
+      reader.onload = function() {
+        img = reader.result
+        that.selfSettingForm.HeadImg = img
+        that.HeadPicture = img
+      }
     },
     saveChange() {
       console.log(this.selfSettingForm)
+      this.f.append('ke')
       this.$store.dispatch('user/saveChange', this.selfSettingForm).then(response => {
         this.$store.dispatch('user/getInfo')
         ElementUI.Message.info(response.content)
       })
     },
-    beforeUploadFile(file) {
-      console.log(file)
-      var reader = new FileReader()
-      let img = ''
-      reader.readAsDataURL(file)
-      reader.onload = function() {
-        img = reader.result
-      }
-      console.log(img)
+    backHome() {
+      this.$router.push('/')
+    },
+    beforeUploadFile() {
     },
     uploadFile() {
-      console.log(this.$refs.target.files[0])
-      this.$refs.upload.submit()
+      this.$refs.uploadExcel.submit()
     }
   }
 }
@@ -153,6 +160,10 @@ export default {
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
+  }
+  .el-icon-plus {
+    border-radius: 10px;
+
   }
 }
 </style>

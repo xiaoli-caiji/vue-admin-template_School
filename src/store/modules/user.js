@@ -11,7 +11,12 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     code: '',
-    role: ''
+    role: '',
+    gender: '',
+    birthDate: new Date(),
+    phoneNumber: '',
+    headImg: new ArrayBuffer(),
+    password: ''
   }
 }
 
@@ -57,7 +62,6 @@ const actions = {
     // const { UserCode, Password } = UserInputDto
     return new Promise((resolve, reject) => {
       login(UserInputDto).then(res => {
-        console.log(res)
         commit('SET_TOKEN', res.access_token)
         setToken(state.token)
         resolve(res)
@@ -81,7 +85,7 @@ const actions = {
         commit('SET_GENDER', res.gender)
         commit('SET_PHONENUM', res.phone_number)
         commit('SET_BIRTHDATE', res.birthdate)
-        commit('SET_HEADIMG', res.picture)
+        commit('SET_HEADIMG', 'https://localhost:13001' + res.picture)
         resolve(res)
       }).catch(error => {
         reject(error)
@@ -91,7 +95,7 @@ const actions = {
 
   async savePassword({ commit }, password) {
     try {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         commit('SET_PASSWORD', password)
         resolve(password)
       })
@@ -101,9 +105,9 @@ const actions = {
   },
 
   saveChange({ commit }, Dto) {
+    console.log(Dto)
     return new Promise((resolve, reject) => {
       selfSetting(Dto).then(response => {
-        console.log(222222222)
         resolve(response)
       }).catch(error => {
         reject(error)
