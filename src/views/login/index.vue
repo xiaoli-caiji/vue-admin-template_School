@@ -39,9 +39,9 @@
         </span>
       </el-form-item>
 
-      <el-radio v-model="radio" label="1" @change="savePassword">记住密码</el-radio>
+      <el-checkbox v-model="checkVlue" @change="savePassword">记住密码</el-checkbox>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登陆</el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">UserName: admin</span>
@@ -54,6 +54,7 @@
 <script>
 import store from '@/store'
 import ElementUI from 'element-ui'
+import { mapGetters } from 'vuex'
 // import { validUserCode } from '@/utils/validate'
 
 export default {
@@ -76,13 +77,13 @@ export default {
     }
     return {
       loginForm: {
-        UserName: '202121030101',
+        UserName: '',
         ClientId: 'ro.client',
         ClientSecrets: 'secret',
         GrantType: 'password',
-        Password: '523214',
-        radio: '1'
+        Password: ''
       },
+      checkVlue: false,
       loginRules: {
         UserName: [{ required: true, trigger: 'blur', validator: validateUserCode }],
         Password: [{ required: true, trigger: 'blur', validator: validatePassword }]
@@ -92,6 +93,16 @@ export default {
       redirect: undefined
     }
   },
+  computed: {
+    ...mapGetters([
+      'code',
+      'name',
+      'gender',
+      'birthDate',
+      'headImg',
+      'phoneNumber'
+    ])
+  },
   watch: {
     $route: {
       handler: function(route) {
@@ -100,7 +111,15 @@ export default {
       immediate: true
     }
   },
+  mounted: function() {
+    this.selfInfo()
+  },
   methods: {
+    selfInfo() {
+      console.log
+      this.loginForm.UserName = this.code
+      this.loginForm.Password = this.password
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -143,6 +162,7 @@ export default {
     },
     savePassword() {
       this.$store.dispatch('user/savePassword', this.loginForm.Password).then(response => {
+        console.log(1111111)
       }).catch(() => {
         console.log('记住密码失败！')
       })

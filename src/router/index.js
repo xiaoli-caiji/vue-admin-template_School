@@ -128,7 +128,6 @@ export const constantRoutes = [
       meta: { title: '选课系统', icon: 'dashboard' }
     }]
   },
-
   {
     path: '/userRegister',
     component: Layout,
@@ -141,7 +140,6 @@ export const constantRoutes = [
       meta: { title: '用户管理系统', icon: 'dashboard' }
     }]
   },
-
   {
     path: '/reportCard',
     component: Layout,
@@ -154,7 +152,6 @@ export const constantRoutes = [
       meta: { title: '成绩单查询', icon: 'table' }
     }]
   },
-
   {
     path: '/getStudent',
     component: Layout,
@@ -167,7 +164,19 @@ export const constantRoutes = [
       meta: { title: '成绩录入', icon: 'table' }
     }]
   },
-
+  {
+    path: '/newsManage',
+    component: Layout,
+    redirect: '/officeTeacher/index',
+    roles: ['办公老师'],
+    department: ['新闻'],
+    children: [{
+      path: 'index',
+      name: '办公老师首页',
+      component: () => import('@/views/officeTeacher/index'),
+      meta: { title: '办公老师首页', icon: 'dashboard' }
+    }]
+  },
   {
     path: '/example',
     component: Layout,

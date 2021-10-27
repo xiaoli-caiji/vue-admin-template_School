@@ -69,17 +69,19 @@ export default {
   data() {
     return {
       writeInForm: {
-        userName: '郑七',
-        idCardNum: '123765199611079287',
-        num: '01',
-        academic: '机械',
-        class: '01',
+        userName: '',
+        idCardNum: '',
+        num: '',
+        academic: '',
+        class: '',
         studentType: '',
         studentTypes: studentsTypes,
-        department: '教学',
+        department: '',
         userRole: '',
         teachCourse: [],
-        courses: []
+        courses: [],
+        phoneNum: '',
+        userCode: ''
       },
       userList: {}
 
@@ -96,13 +98,16 @@ export default {
   methods: {
     userRegister(label) {
       this.userList = {
+        UserCode: this.writeInForm.userCode,
         Name: this.writeInForm.userName,
         StudentType: this.writeInForm.studentType,
         IdCardNumber: this.writeInForm.idCardNum,
         Num: this.writeInForm.num,
         Academic: this.writeInForm.academic,
         Class: this.writeInForm.class,
-        userRole: label
+        userRole: label,
+        Department: this.writeInForm.department,
+        PhoneNumber: this.writeInForm.phoneNum
       }
       console.log(this.writeInForm)
       console.log(this.userList)

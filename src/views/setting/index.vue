@@ -83,7 +83,6 @@ export default {
         UserCode: '',
         PhoneNumber: ''
       },
-      f: new FormData(),
       HeadPicture: '',
       header: { Authorization: window.sessionStorage.getItem('token') }
     }
@@ -127,7 +126,6 @@ export default {
     },
     saveChange() {
       console.log(this.selfSettingForm)
-      this.f.append('ke')
       this.$store.dispatch('user/saveChange', this.selfSettingForm).then(response => {
         this.$store.dispatch('user/getInfo')
         ElementUI.Message.info(response.content)

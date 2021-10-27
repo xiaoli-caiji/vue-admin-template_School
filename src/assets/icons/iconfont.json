@@ -1,0 +1,16 @@
+{
+  "id": "2895609",
+  "name": "elementUI",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "15874075",
+      "name": "icons-top-06",
+      "font_class": "el-icon-xc",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    }
+  ]
+}

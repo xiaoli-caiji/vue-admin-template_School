@@ -94,9 +94,12 @@ const actions = {
   },
 
   async savePassword({ commit }, password) {
+    console.log(22222222)
     try {
       return new Promise((resolve) => {
+        getInfo({ commit, state })
         commit('SET_PASSWORD', password)
+        console.log(3333333333)
         resolve(password)
       })
     } catch (error) {
