@@ -42,7 +42,6 @@
           action="https://localhost:13001/api/UserSelfSetting/ReceiveHeadImg"
           accept="image/*"
           :auto-upload="false"
-          :headers="header"
           :multiple="false"
           :limit="1"
           :before-upload="beforeUploadFile"
@@ -83,8 +82,8 @@ export default {
         UserCode: '',
         PhoneNumber: ''
       },
-      HeadPicture: '',
-      header: { Authorization: window.sessionStorage.getItem('token') }
+      HeadPicture: ''
+      // header: { Authorization: window.sessionStorage.getItem('token') }
     }
   },
   computed: {

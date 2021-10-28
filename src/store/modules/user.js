@@ -1,5 +1,6 @@
-import { login, logout, getInfo, browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse, selfSetting } from '@/api/user'
+import { login, logout, getInfo, selfSetting, getNewsTypes, newsSave } from '@/api/user'
 import { studentRegistration, teachingTeacherRegistration, otherStuffRegistration, officeTeacherRegistration } from '@/api/user'
+import { browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import ElementUI from 'element-ui'
@@ -225,6 +226,28 @@ const actions = {
     return new Promise((resolve, reject) => {
       writeInReportCard(data).then(response => {
         // data是list，返回的结果也是，把结果直接返回到表格的备注一栏里
+        // ElementUI.Message.info(response.content)
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  getNewsTypes({ commit }) {
+    return new Promise((resolve, reject) => {
+      getNewsTypes().then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  newsSave({ commit }, dto) {
+    return new Promise((resolve, reject) => {
+      newsSave(dto).then(response => {
+        console.log(response)
         // ElementUI.Message.info(response.content)
         resolve(response)
       }).catch(error => {

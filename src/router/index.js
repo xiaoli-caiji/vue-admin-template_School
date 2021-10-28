@@ -167,15 +167,25 @@ export const constantRoutes = [
   {
     path: '/newsManage',
     component: Layout,
-    redirect: '/officeTeacher/index',
+    name: 'newsManage',
+    redirect: 'newsEdit',
+    meta: { title: '新闻管理站', icon: 'icons-top-06' },
     roles: ['办公老师'],
     department: ['新闻'],
-    children: [{
-      path: 'index',
-      name: '办公老师首页',
-      component: () => import('@/views/officeTeacher/index'),
-      meta: { title: '办公老师首页', icon: 'dashboard' }
-    }]
+    children: [
+      {
+        path: 'newsUpload',
+        name: '新闻撰写',
+        component: () => import('@/views/newsManage/newsUpload/index'),
+        meta: { title: '新闻撰写', icon: '提交' }
+      },
+      {
+        path: 'newsEdit',
+        name: '新闻管理',
+        component: () => import('@/views/newsManage/newsEdit/index'),
+        meta: { title: '新闻管理', icon: '业务设置' }
+      }
+    ]
   },
   {
     path: '/example',

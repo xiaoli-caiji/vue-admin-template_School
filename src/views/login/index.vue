@@ -77,11 +77,11 @@ export default {
     }
     return {
       loginForm: {
-        UserName: '',
+        UserName: 'OT0002',
         ClientId: 'ro.client',
         ClientSecrets: 'secret',
         GrantType: 'password',
-        Password: ''
+        Password: '219281'
       },
       checkVlue: false,
       loginRules: {
@@ -111,15 +111,14 @@ export default {
       immediate: true
     }
   },
-  mounted: function() {
-    this.selfInfo()
-  },
+  // mounted: function() {
+  //   this.selfInfo()
+  // },
   methods: {
-    selfInfo() {
-      console.log
-      this.loginForm.UserName = this.code
-      this.loginForm.Password = this.password
-    },
+    // selfInfo() {
+    //   this.loginForm.UserName = this.code
+    //   this.loginForm.Password = this.password
+    // },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''

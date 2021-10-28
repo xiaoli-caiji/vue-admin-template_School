@@ -105,6 +105,24 @@ export function writeInReportCard(data) {
   })
 }
 
+export function getNewsTypes() {
+  return request({
+    url: '/api/NewsManage/GetNewsTypes',
+    method: 'get'
+  })
+}
+
+export function newsSave(data) {
+  return request({
+    url: '/api/NewsManage/NewsSave',
+    // headers: {
+    //   'Content-Type': 'multipart/form-data'
+    // },
+    method: 'post',
+    data
+  })
+}
+
 export function getReportCard(urll) {
   return request({
     url: urll,
