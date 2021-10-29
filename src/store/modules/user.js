@@ -1,4 +1,4 @@
-import { login, logout, getInfo, selfSetting, getNewsTypes, newsSave } from '@/api/user'
+import { login, logout, getInfo, selfSetting, getNewsTypes, newsSave, getNews } from '@/api/user'
 import { studentRegistration, teachingTeacherRegistration, otherStuffRegistration, officeTeacherRegistration } from '@/api/user'
 import { browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
@@ -249,6 +249,16 @@ const actions = {
       newsSave(dto).then(response => {
         console.log(response)
         // ElementUI.Message.info(response.content)
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  getNews({ commit }) {
+    return new Promise((resolve, reject) => {
+      getNews().then(response => {
         resolve(response)
       }).catch(error => {
         reject(error)

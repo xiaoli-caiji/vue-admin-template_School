@@ -184,6 +184,12 @@ export const constantRoutes = [
         name: '新闻管理',
         component: () => import('@/views/newsManage/newsEdit/index'),
         meta: { title: '新闻管理', icon: '业务设置' }
+      },
+      {
+        path: 'tinymceDemo',
+        name: '编辑器示例',
+        component: () => import('@/views/tinymce/tinymce'),
+        meta: { title: '编辑器示例', icon: '业务设置' }
       }
     ]
   },

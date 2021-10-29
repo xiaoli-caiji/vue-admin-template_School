@@ -160,9 +160,7 @@ export default {
       var obj = document.getElementById(courseCode)
       console.log(courseCode)
       this.$store.dispatch('user/chooseCourse', this.courseCode).then(response => {
-        console.log(222222)
         if (response.type === 200) {
-          console.log(3333)
           obj.type = Text
           obj.disabled = true
           this.buttonLoading = false

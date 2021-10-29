@@ -115,11 +115,21 @@ export function getNewsTypes() {
 export function newsSave(data) {
   return request({
     url: '/api/NewsManage/NewsSave',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    method: 'post',
+    data
+  })
+}
+
+export function getNews() {
+  return request({
+    url: '/api/NewsManage/GetNews',
     // headers: {
     //   'Content-Type': 'multipart/form-data'
     // },
-    method: 'post',
-    data
+    method: 'get'
   })
 }
 
