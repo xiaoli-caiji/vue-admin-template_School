@@ -126,9 +126,13 @@ export function newsSave(data) {
 export function getNews() {
   return request({
     url: '/api/NewsManage/GetNews',
-    // headers: {
-    //   'Content-Type': 'multipart/form-data'
-    // },
+    method: 'get'
+  })
+}
+
+export function showNews() {
+  return request({
+    url: '/api/NewsManage/ShowNews',
     method: 'get'
   })
 }

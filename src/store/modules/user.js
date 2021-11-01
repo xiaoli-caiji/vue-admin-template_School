@@ -1,4 +1,4 @@
-import { login, logout, getInfo, selfSetting, getNewsTypes, newsSave, getNews } from '@/api/user'
+import { login, logout, getInfo, selfSetting, getNewsTypes, newsSave, getNews, showNews } from '@/api/user'
 import { studentRegistration, teachingTeacherRegistration, otherStuffRegistration, officeTeacherRegistration } from '@/api/user'
 import { browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
@@ -243,6 +243,9 @@ const actions = {
       })
     })
   },
+  getHistoryOrDetails({ commit }) {
+
+  },
 
   newsSave({ commit }, dto) {
     return new Promise((resolve, reject) => {
@@ -259,6 +262,18 @@ const actions = {
   getNews({ commit }) {
     return new Promise((resolve, reject) => {
       getNews().then(response => {
+        console.log(33333333333)
+        resolve(response)
+      }).catch(error => {
+        console.log(2222222)
+        reject(error)
+      })
+    })
+  },
+
+  showNews({ commit }) {
+    return new Promise((resolve, reject) => {
+      showNews().then(response => {
         resolve(response)
       }).catch(error => {
         reject(error)
