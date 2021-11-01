@@ -175,7 +175,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'newsUpload',
-        name: '新闻撰写',
+        name: '新闻撰写/上传',
         component: () => import('@/views/newsManage/newsUpload/index'),
         meta: { title: '新闻撰写', icon: '提交' },
         params: { key: 'currentNews', value: 'news' }
@@ -185,6 +185,12 @@ export const constantRoutes = [
         name: '新闻管理',
         component: () => import('@/views/newsManage/newsList/index'),
         meta: { title: '新闻管理', icon: '业务设置' }
+      },
+      {
+        path: 'newsEdit',
+        name: '新闻编辑',
+        component: () => import('@/views/newsManage/newsEdit/index'),
+        meta: { title: '新闻编辑', icon: '业务设置' }
       },
       {
         path: 'tinymceDemo',
