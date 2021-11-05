@@ -137,6 +137,17 @@ export function showNews() {
   })
 }
 
+export function newsEdit(data) {
+  return request({
+    url: '/api/NewsManage/NewsEdit',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    method: 'post',
+    data
+  })
+}
+
 export function getReportCard(urll) {
   return request({
     url: urll,

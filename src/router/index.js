@@ -168,7 +168,7 @@ export const constantRoutes = [
     path: '/newsManage',
     component: Layout,
     name: 'newsManage',
-    redirect: 'newsEdit',
+    redirect: 'newsList',
     meta: { title: '新闻管理站', icon: 'icons-top-06' },
     roles: ['办公老师'],
     department: ['新闻'],
@@ -177,8 +177,7 @@ export const constantRoutes = [
         path: 'newsUpload',
         name: '新闻撰写/上传',
         component: () => import('@/views/newsManage/newsUpload/index'),
-        meta: { title: '新闻撰写', icon: '提交' },
-        params: { key: 'currentNews', value: 'news' }
+        meta: { title: '新闻撰写', icon: '提交' }
       },
       {
         path: 'newsList',
@@ -190,7 +189,15 @@ export const constantRoutes = [
         path: 'newsEdit',
         name: '新闻编辑',
         component: () => import('@/views/newsManage/newsEdit/index'),
-        meta: { title: '新闻编辑', icon: '业务设置' }
+        meta: { title: '新闻编辑', icon: '业务设置' },
+        params: { key: 'currentNews', value: 'news' }
+      },
+      {
+        path: 'newsShow',
+        name: '新闻浏览',
+        component: () => import('@/views/newsManage/newsHtml/index'),
+        meta: { title: '新闻浏览', icon: '业务设置' },
+        params: { key: 'currentNews', value: 'news' }
       },
       {
         path: 'tinymceDemo',

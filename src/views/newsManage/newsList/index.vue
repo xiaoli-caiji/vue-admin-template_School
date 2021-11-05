@@ -26,12 +26,12 @@
           </el-table-column>
           <el-table-column label="点击网址查看" align="center">
             <template slot-scope="scope">
-              <a class="test" @click="gotoNews(scope.row.newsContentAddress)">{{ 'https://localhost:13001/'+scope.row.newsContentAddress }}</a>
+              <a class="test" @click="gotoNews(scope.row)">{{ '点击预览' }}</a>
             </template>
           </el-table-column>
-          <el-table-column label="详情" align="center">
+          <el-table-column label="编辑修改" align="center">
             <template slot-scope="scope">
-              <a @click="gotoEdit(scope.row)">编辑</a>
+              <el-button type="text" @click="Edit(scope.row)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -64,19 +64,46 @@
               <a @click="gotoFile(scope.row.newsFileAddress)">{{ 'https://localhost:13001/'+scope.row.newsFileAddress }}</a>
             </template>
           </el-table-column>
+          <el-table-column label="更改上传" align="center">
+            <template slot-scope="scope">
+              <el-button type="text" @click="gotoFileEdit(scope.row)">编辑</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
+    <div v-if="dialogFormVisible">
+      <el-dialog ref="newsEditDialog" :visible.sync="dialogFormVisible" title="编辑" width="auto" @close="dialogFormVisible = false">
+        <div style="height:600px; overflow-y:auto;">
+          <NewsEditForm v-if="dialogFormVisible" ref="editForm" :current-news="detailOnLine" />
+        </div>
+      </el-dialog>
+    </div>
+    <div v-if="dialogFileVisible">
+      <el-dialog ref="newsFileDialog" :visible.sync="dialogFileVisible" title="编辑" width="auto" @close="dialogFileVisible = false">
+        <div style="height:600px; overflow-y:auto;">
+          <NewsFileEdit v-if="dialogFileVisible" ref="fileEditForm" :current-news="detailFile" />
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script>
+import NewsEditForm from '@/views/newsManage/newsEdit/index.vue'
+import NewsFileEdit from '@/views/newsManage/newsEdit/newsFileEdit.vue'
 
 export default {
+  inject: ['reload'],
+  components: { NewsEditForm, NewsFileEdit },
   data() {
     return {
       htmlNews: [],
-      fileNews: []
+      fileNews: [],
+      dialogFormVisible: false,
+      dialogFileVisible: false,
+      detailOnLine: {},
+      detailFile: {}
     }
   },
   mounted: function() {
@@ -87,24 +114,26 @@ export default {
       this.$store.dispatch('user/getNews').then(response => {
         this.htmlNews = response.data.htmlNews
         this.fileNews = response.data.fileNews
-        console.log(response.data)
       })
     },
-    gotoNews(s) {
-      window.open('https://localhost:13001/' + s)
+    gotoNews(news) {
+      sessionStorage.setItem('currentNews', JSON.stringify(news))
+      const url = this.$router.resolve({
+        name: '新闻浏览',
+        path: 'newsShow'
+      })
+      window.open(url.href, '_blank')
     },
     gotoFile(url) {
       window.open('https://localhost:13001/' + url)
     },
-    gotoEdit(news) {
-      this.$router.push({
-        path: 'newsUpload',
-        name: '新闻撰写',
-        params: {
-          key: 'currentNews',
-          value: news
-        }
-      })
+    Edit(row) {
+      this.dialogFormVisible = true
+      this.detailOnLine = row
+    },
+    gotoFileEdit(row) {
+      this.dialogFileVisible = true
+      this.detailFile = row
     }
   }
 }

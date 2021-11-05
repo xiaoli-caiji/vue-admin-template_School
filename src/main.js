@@ -10,7 +10,7 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
-
+import VueResource from 'vue-resource'
 import '@/icons' // icon
 import '@/permission' // permission control
 import VueRouter from 'vue-router'
@@ -23,6 +23,7 @@ import VueRouter from 'vue-router'
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
+Vue.use(VueResource)
 if (process.env.NODE_ENV === 'production') {
   const { mockXHR } = require('../mock')
   mockXHR()

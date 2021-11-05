@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-tabs type="card">
       <el-tab-pane label="在线投稿">
-        <el-form ref="form" :model="form" label-width="120px">
+        <el-form ref="Editform" :model="form" label-width="120px">
           <el-form-item label="新闻标题" prop="NewsName">
             <el-input v-model="form.NewsName" />
           </el-form-item>
@@ -44,7 +44,7 @@
               :limit="1"
               :on-change="pictureAdd"
             >
-              <img :src="form.NewsCover">
+              <img :src="form.NewsCover" width="150px" height="auto">
               <i class="el-icon-plus" />
             </el-upload>
           </el-form-item>
@@ -58,7 +58,7 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="已有上传">
-        <el-form ref="form" :model="form" label-width="120px">
+        <el-form ref="Fileform" :model="form" label-width="120px">
           <el-form-item label="新闻标题" prop="NewsName">
             <el-input v-model="form.NewsName" />
           </el-form-item>
@@ -100,7 +100,7 @@
               :limit="1"
               :on-change="pictureAdd"
             >
-              <img :src="form.NewsCover">
+              <img :src="form.NewsCover" width="150px" height="auto">
               <i class="el-icon-plus" />
             </el-upload>
           </el-form-item>
@@ -130,6 +130,9 @@
             >
               <i class="el-icon-plus" />
             </el-upload>
+            <span v-for="(item, index) in newsPicture" :key="index">
+              <img :src="item" width="150px" height="auto">
+            </span>
           </el-form-item>
           <el-form-item>
             <el-button type="submit" @click.native.prevent="onSubmit">上传</el-button>
@@ -147,6 +150,7 @@ import { mapGetters } from 'vuex'
 import Tinymce from '@/components/Tinymce'
 
 export default {
+  inject: ['reload'],
   components: { Tinymce },
   data() {
     return {
@@ -162,6 +166,7 @@ export default {
       },
       types: [],
       NewsPicturesBefore: [],
+      newsPicture: [],
       dto: new FormData(),
       content: ''
     }
@@ -173,7 +178,6 @@ export default {
   },
   mounted: function() {
     this.getTypes()
-    this.getHistoryOrDetails()
   },
   methods: {
     onCancel() {
@@ -189,25 +193,25 @@ export default {
         this.types = response.data
       })
     },
-    getHistoryOrDetails() {
-      var currentNews = this.$route.params.value
-      if (currentNews !== undefined) {
-        this.form.NewsName = currentNews.newsName
-        this.form.NewsType = currentNews.newsType.newTypeName
-        this.form.NewsStartTime = currentNews.newsShowStartTime
-        this.form.NewsEndTime = currentNews.newsShowEndTime
-        // this.form.n
-      }
-    },
     fileChange(file, fileList) {
       this.form.NewsFile = fileList[0].raw
     },
     imgChange(file, fileList) {
       this.NewsPicturesBefore = fileList
+      var that = this
+      this.newsPicture = []
+      this.NewsPicturesBefore.forEach(f => {
+        const reader = new FileReader()
+        reader.readAsDataURL(f.raw)
+        reader.onload = function() {
+          that.newsPicture.push(reader.result)
+        }
+      })
     },
     onSubmit() {
       var that = this
-      this.form.NewsUploadTime = new Date()
+      var t = new Date()
+      this.form.NewsUploadTime = t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate()
       // var tt = this.form.NewsStartTime.getFullYear() + '-' + (this.form.NewsStartTime.getMonth() + 1) + '-' + this.form.NewsStartTime.getDate() + ' ' + this.form.NewsStartTime.getHours() + ':' + this.form.NewsStartTime.getMinutes() + ':' + this.form.NewsStartTime.getSeconds()
       // var et = this.form.NewsEndTime.getFullYear() + '-' + (this.form.NewsEndTime.getMonth() + 1) + '-' + this.form.NewsEndTime.getDate() + ' ' + this.form.NewsEndTime.getHours() + ':' + this.form.NewsEndTime.getMinutes() + ':' + this.form.NewsEndTime.getSeconds()
       // var ut = this.form.NewsUploadTime.getFullYear() + '-' + (this.form.NewsUploadTime.getMonth() + 1) + '-' + this.form.NewsUploadTime.getDate() + ' ' + this.form.NewsUploadTime.getHours() + ':' + this.form.NewsUploadTime.getMinutes() + ':' + this.form.NewsUploadTime.getSeconds()
@@ -228,33 +232,33 @@ export default {
       console.log(this.form)
       this.$store.dispatch('user/newsSave', this.dto).then(response => {
         ElementUI.Message.info(response.content)
-
-        // this.$refs.form.resetFields()
+        that.reload()
       })
     },
     onSubmitOnline() {
       var that = this
-      console.log(this.$refs.editor.pictureList)
-      this.$refs.editor.pictureList.forEach(p => {
-        that.dto.append('NewsPictures', p)
-      })
-      this.form.NewsUploadTime = new Date()
-      var tt = this.form.NewsStartTime.getFullYear() + '-' + (this.form.NewsStartTime.getMonth() + 1) + '-' + this.form.NewsStartTime.getDate() + ' ' + this.form.NewsStartTime.getHours() + ':' + this.form.NewsStartTime.getMinutes() + ':' + this.form.NewsStartTime.getSeconds()
-      var et = this.form.NewsEndTime.getFullYear() + '-' + (this.form.NewsEndTime.getMonth() + 1) + '-' + this.form.NewsEndTime.getDate() + ' ' + this.form.NewsEndTime.getHours() + ':' + this.form.NewsEndTime.getMinutes() + ':' + this.form.NewsEndTime.getSeconds()
-      var ut = this.form.NewsUploadTime.getFullYear() + '-' + (this.form.NewsUploadTime.getMonth() + 1) + '-' + this.form.NewsUploadTime.getDate() + ' ' + this.form.NewsUploadTime.getHours() + ':' + this.form.NewsUploadTime.getMinutes() + ':' + this.form.NewsUploadTime.getSeconds()
+      var t = new Date()
+      this.form.NewsUploadTime = t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate()
+      if (this.$refs.editor.pictureList.length !== 0) {
+        this.$refs.editor.pictureList.forEach(p => {
+          that.dto.append('NewsPictures', p)
+        })
+      }
       this.dto.append('NewsName', this.form.NewsName)
       this.dto.append('NewsType', this.form.NewsType)
-      this.dto.append('NewsStartTime', tt)
-      this.dto.append('NewsEndTime', et)
-      this.dto.append('NewsUploadTime', ut)
+      this.dto.append('NewsStartTime', this.form.NewsStartTime)
+      this.dto.append('NewsEndTime', this.form.NewsEndTime)
+      this.dto.append('NewsUploadTime', this.form.NewsUploadTime)
       this.dto.append('NewsCover', this.form.NewsCover)
       this.dto.append('NewsWriter', this.name)
       this.dto.append('NewsCoverType', this.form.newsCoverType)
       this.dto.append('NewsContent', this.content)
-      // this.dto.append('NewsPicture', this.$refs.editor.pictureList)
+      var s = this.dto.get('NewsName')
+      console.log(s)
       this.$store.dispatch('user/newsSave', this.dto).then(response => {
         ElementUI.Message.info(response.content)
-        this.$refs.form.resetFields()
+        // inject与provide配合使用，参考App.vue，刷新页面
+        this.reload()
       })
     },
     chooseCover() {

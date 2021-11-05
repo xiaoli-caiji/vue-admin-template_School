@@ -1,4 +1,4 @@
-import { login, logout, getInfo, selfSetting, getNewsTypes, newsSave, getNews, showNews } from '@/api/user'
+import { login, logout, getInfo, selfSetting, getNewsTypes, newsSave, getNews, showNews, newsEdit } from '@/api/user'
 import { studentRegistration, teachingTeacherRegistration, otherStuffRegistration, officeTeacherRegistration } from '@/api/user'
 import { browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
@@ -250,8 +250,18 @@ const actions = {
   newsSave({ commit }, dto) {
     return new Promise((resolve, reject) => {
       newsSave(dto).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  newsEdit({ commit }, dto) {
+    return new Promise((resolve, reject) => {
+      console.log(dto.get('DeletePicture'))
+      newsEdit(dto).then(response => {
         console.log(response)
-        // ElementUI.Message.info(response.content)
         resolve(response)
       }).catch(error => {
         reject(error)
@@ -262,10 +272,8 @@ const actions = {
   getNews({ commit }) {
     return new Promise((resolve, reject) => {
       getNews().then(response => {
-        console.log(33333333333)
         resolve(response)
       }).catch(error => {
-        console.log(2222222)
         reject(error)
       })
     })

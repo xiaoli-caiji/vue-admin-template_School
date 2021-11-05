@@ -26,12 +26,6 @@
       >
         <a>{{ item.newsCoverAddressOrTitle }}</a>
       </el-link>
-      <!-- <li
-        v-for="(item,index) in NewsCoverIsTitle"
-        :key="index"
-      >
-        <a :href="'https://localhost:13001'+item.newsContentAddress">{{ item.newsCoverAddressOrTitle }}</a>
-      </li> -->
     </div>
   </div>
 </template>
@@ -67,10 +61,19 @@ export default {
     },
     watchNews(news) {
       console.log(news)
-      window.open('https://localhost:13001' + news.newsContentAddress)
+      sessionStorage.setItem('currentNews', JSON.stringify(news))
+      const url = this.$router.resolve({
+        name: '新闻浏览',
+        path: 'newsShow',
+        query: {
+          newsId: news.id
+        }
+      })
+      window.open(url.href, '_blank')
+      // window.open('http://localhost:9528/#/newsManage/newsShow?currentNews=' + news)
     },
     watchHtmlNews(url) {
-      window.open('https://localhost:13001' + url.newsContentAddress)
+      window.open('http://localhost:9528/#/newsManage/newsShow')
     }
   }
 }

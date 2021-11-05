@@ -5,7 +5,7 @@
         <el-input v-model="form.NewsName" />
       </el-form-item>
       <el-form-item label="新闻类型" prop="NewsType">
-        <el-select v-model="form.NewsType" placeholder="请选择新闻类型">
+        <el-select v-model="form.NewsType" :placeholder="form.NewsType">
           <el-option
             v-for="(item,index) in types"
             :key="index"
@@ -13,6 +13,12 @@
             :value="item"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="上次编辑时间" prop="NewsUploadHistoryTime">
+        <a>{{ form.NewsUploadHistoryTime }}</a>
+      </el-form-item>
+      <el-form-item label="上次编辑作者" prop="NewsWriter">
+        <a>{{ form.NewsWriter }}</a>
       </el-form-item>
       <el-form-item label="展示时间" prop="NewsStartTime">
         <el-col :span="11">
@@ -25,13 +31,16 @@
           </el-form-item>
         </el-col>
       </el-form-item>
-      <el-form-item label="封面内容" prop="newsCoverType">
-        <el-radio-group v-model="form.newsCoverType" @change="chooseCover">
+      <el-form-item label="封面内容" prop="NewsCoverType">
+        <el-radio-group v-model="form.NewsCoverType" @change="chooseCover">
           <el-radio label="图片" />
           <el-radio label="标题" />
         </el-radio-group>
       </el-form-item>
-      <el-form-item id="addPicture1" label="上传图片：" prop="NewsCover">
+      <el-form-item id="historyCover" label="原版封面" prop="historyCover">
+        <img :src="historyCover" width="150px" height="auto">
+      </el-form-item>
+      <el-form-item id="addPicture" label="添加封面" prop="NewsCover">
         <el-upload
           ref="uploadPicture"
           action="https://localhost:13001/api/UserSelfSetting/ReceiveHeadImg"
@@ -42,7 +51,7 @@
           :limit="1"
           :on-change="pictureAdd"
         >
-          <img :src="form.NewsCover">
+          <img :src="form.NewsCover" width="150px" height="auto">
           <i class="el-icon-plus" />
         </el-upload>
       </el-form-item>
@@ -50,12 +59,8 @@
         <Tinymce ref="editor" v-model="content" :height="400" />
       </el-form-item>
       <el-form-item>
-        <el-button @click.native.prevent="onSubmitOnline">上传</el-button>
-        <el-button @click="onCancel">Cancel</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="submit" @click.native.prevent="onSubmit">上传</el-button>
-        <el-button @click="onCancel">Cancel</el-button>
+        <el-button @click.native.prevent="onSubmitOnline">保存并上传</el-button>
+        <el-button @click="onCancel">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -67,10 +72,19 @@ import { mapGetters } from 'vuex'
 import Tinymce from '@/components/Tinymce'
 
 export default {
+  name: 'NewsEditForm',
+  inject: ['reload'],
   components: { Tinymce },
+  props: {
+    currentNews: {
+      type: Object,
+      default: undefined
+    }
+  },
   data() {
     return {
       form: {
+        NewsId: 0,
         NewsName: '',
         NewsType: '',
         NewsStartTime: '',
@@ -78,12 +92,16 @@ export default {
         NewsEndTime: '',
         NewsUploadTime: '',
         NewsCover: '',
-        newsCoverType: ''
+        NewsCoverType: '',
+        NewsUploadHistoryTime: '',
+        NewsWriter: ''
       },
       types: [],
       NewsPicturesBefore: [],
       dto: new FormData(),
-      content: ''
+      content: '',
+      exist: false,
+      historyCover: ''
     }
   },
   computed: {
@@ -97,26 +115,45 @@ export default {
   },
   methods: {
     onCancel() {
+      console.log(this.$parent.$data)
+      this.$close()
+      this.$parent.$refs.newsEditDialog.close()
+      this.$parent.$data.dialogFormVisible = false
       this.$message({
         message: 'cancel!',
         type: 'warning'
       })
     },
     getTypes() {
-      document.getElementById('addPicture1').style.display = 'none'
-      document.getElementById('addPicture2').style.display = 'none'
       this.$store.dispatch('user/getNewsTypes').then(response => {
         this.types = response.data
       })
     },
     getHistoryOrDetails() {
-      var currentNews = this.$route.params.value
-      if (currentNews !== undefined) {
-        this.form.NewsName = currentNews.newsName
-        this.form.NewsType = currentNews.newsType.newTypeName
-        this.form.NewsStartTime = currentNews.newsShowStartTime
-        this.form.NewsEndTime = currentNews.newsShowEndTime
-        // this.form.n
+      var that = this
+      if (this.currentNews !== undefined) {
+        that.form.NewsId = that.currentNews.id
+        that.form.NewsWriter = that.currentNews.newsWriter
+        that.form.NewsName = that.currentNews.newsName
+        that.form.NewsType = String(that.currentNews.newsType.newsTypeName)
+        that.form.NewsStartTime = that.currentNews.newsShowStartTime
+        that.form.NewsEndTime = that.currentNews.newsShowEndTime
+        that.form.NewsCoverType = that.currentNews.newsCoverType
+        if (that.form.NewsCoverType === '图片') {
+          document.getElementById('addPicture').style.display = 'inline'
+          document.getElementById('historyCover').style.display = 'inline'
+          that.historyCover = 'https://localhost:13001/' + that.currentNews.newsCoverAddressOrTitle
+        } else {
+          document.getElementById('addPicture').style.display = 'none'
+          document.getElementById('historyCover').style.display = 'none'
+        }
+        that.form.NewsUploadHistoryTime = that.currentNews.newsWriteTime
+        // 网址后面加随机数解决浏览器的缓存效果，实时获取最新数据
+        this.content = this.currentNews.newsContent
+        // this.$http.get('https://localhost:13001/' + that.currentNews.newsContentAddress + '?num=' + Math.random()).then(response => {
+        //   console.log(response)
+        //   that.content = response.body
+        // })
       }
     },
     fileChange(file, fileList) {
@@ -125,66 +162,40 @@ export default {
     imgChange(file, fileList) {
       this.NewsPicturesBefore = fileList
     },
-    onSubmit() {
+    onSubmitOnline() {
       var that = this
-      this.form.NewsUploadTime = new Date()
-      // var tt = this.form.NewsStartTime.getFullYear() + '-' + (this.form.NewsStartTime.getMonth() + 1) + '-' + this.form.NewsStartTime.getDate() + ' ' + this.form.NewsStartTime.getHours() + ':' + this.form.NewsStartTime.getMinutes() + ':' + this.form.NewsStartTime.getSeconds()
-      // var et = this.form.NewsEndTime.getFullYear() + '-' + (this.form.NewsEndTime.getMonth() + 1) + '-' + this.form.NewsEndTime.getDate() + ' ' + this.form.NewsEndTime.getHours() + ':' + this.form.NewsEndTime.getMinutes() + ':' + this.form.NewsEndTime.getSeconds()
-      // var ut = this.form.NewsUploadTime.getFullYear() + '-' + (this.form.NewsUploadTime.getMonth() + 1) + '-' + this.form.NewsUploadTime.getDate() + ' ' + this.form.NewsUploadTime.getHours() + ':' + this.form.NewsUploadTime.getMinutes() + ':' + this.form.NewsUploadTime.getSeconds()
-      this.NewsPicturesBefore.forEach(p => {
-        that.dto.append('NewsPictures', p.raw)
+      this.$refs.editor.pictureList.forEach(p => {
+        that.dto.append('NewsPictures', p)
       })
+      this.form.NewsUploadTime = new Date()
+      if (this.form.NewsCoverType === '标题') {
+        this.form.NewsCover = this.form.NewsName
+      }
+      this.dto.append('NewsId', this.form.NewsId)
       this.dto.append('NewsName', this.form.NewsName)
       this.dto.append('NewsType', this.form.NewsType)
       this.dto.append('NewsStartTime', this.form.NewsStartTime)
       this.dto.append('NewsEndTime', this.form.NewsEndTime)
       this.dto.append('NewsUploadTime', this.form.NewsUploadTime)
-      this.dto.append('NewsFile', this.form.NewsFile)
       this.dto.append('NewsCover', this.form.NewsCover)
       this.dto.append('NewsWriter', this.name)
-      this.dto.append('NewsCoverType', this.form.newsCoverType)
+      this.dto.append('NewsCoverType', this.form.NewsCoverType)
       this.dto.append('NewsContent', this.content)
-      console.log(this.NewsPicturesBefore)
       console.log(this.form)
-      this.$store.dispatch('user/newsSave', this.dto).then(response => {
+      this.$store.dispatch('user/newsEdit', this.dto).then(response => {
         ElementUI.Message.info(response.content)
-
-        // this.$refs.form.resetFields()
-      })
-    },
-    onSubmitOnline() {
-      var that = this
-      console.log(this.$refs.editor.pictureList)
-      this.$refs.editor.pictureList.forEach(p => {
-        that.dto.append('NewsPictures', p)
-      })
-      this.form.NewsUploadTime = new Date()
-      var tt = this.form.NewsStartTime.getFullYear() + '-' + (this.form.NewsStartTime.getMonth() + 1) + '-' + this.form.NewsStartTime.getDate() + ' ' + this.form.NewsStartTime.getHours() + ':' + this.form.NewsStartTime.getMinutes() + ':' + this.form.NewsStartTime.getSeconds()
-      var et = this.form.NewsEndTime.getFullYear() + '-' + (this.form.NewsEndTime.getMonth() + 1) + '-' + this.form.NewsEndTime.getDate() + ' ' + this.form.NewsEndTime.getHours() + ':' + this.form.NewsEndTime.getMinutes() + ':' + this.form.NewsEndTime.getSeconds()
-      var ut = this.form.NewsUploadTime.getFullYear() + '-' + (this.form.NewsUploadTime.getMonth() + 1) + '-' + this.form.NewsUploadTime.getDate() + ' ' + this.form.NewsUploadTime.getHours() + ':' + this.form.NewsUploadTime.getMinutes() + ':' + this.form.NewsUploadTime.getSeconds()
-      this.dto.append('NewsName', this.form.NewsName)
-      this.dto.append('NewsType', this.form.NewsType)
-      this.dto.append('NewsStartTime', tt)
-      this.dto.append('NewsEndTime', et)
-      this.dto.append('NewsUploadTime', ut)
-      this.dto.append('NewsCover', this.form.NewsCover)
-      this.dto.append('NewsWriter', this.name)
-      this.dto.append('NewsCoverType', this.form.newsCoverType)
-      this.dto.append('NewsContent', this.content)
-      // this.dto.append('NewsPicture', this.$refs.editor.pictureList)
-      this.$store.dispatch('user/newsSave', this.dto).then(response => {
-        ElementUI.Message.info(response.content)
-        this.$refs.form.resetFields()
+        this.$parent.$data.dialogFormVisible = false
+        this.$nextTick(item => {
+          that.dto = new FormData()
+          that.reload
+        })
       })
     },
     chooseCover() {
-      if (this.form.newsCoverType === '图片') {
-        document.getElementById('addPicture1').style.display = 'inline'
-        document.getElementById('addPicture2').style.display = 'inline'
+      if (this.form.NewsCoverType === '图片') {
+        document.getElementById('addPicture').style.display = 'inline'
       } else {
-        this.form.NewsCover = this.form.NewsName
-        document.getElementById('addPicture1').style.display = 'none'
-        document.getElementById('addPicture2').style.display = 'none'
+        document.getElementById('addPicture').style.display = 'none'
       }
     },
     pictureAdd(file, FileList) {
