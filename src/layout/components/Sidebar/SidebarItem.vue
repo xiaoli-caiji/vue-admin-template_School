@@ -30,7 +30,7 @@ import { isExternal } from '@/utils/validate'
 import Item from './Item'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'
-import user from '@/store/modules/user'
+import { mapGetters } from 'vuex'
 // import userInfo from 'os'
 
 export default {
@@ -58,15 +58,25 @@ export default {
     this.onlyOneChild = null
     return {}
   },
+  computed: {
+    ...mapGetters([
+      'department', 'role'
+    ])
+  },
   methods: {
     hasShowing(item, r) {
       var hasrole = Boolean(false)
-      user.state.role.every(r => {
-        hasrole = !item.roles || item.roles.indexOf(r) !== -1
-        return hasrole !== true
-      })
-      // console.log(hasrole)
-      return !item.hidden && hasrole
+      var hasdepartment = Boolean(false)
+      if (this.role !== null) {
+        this.role.every(r => {
+          hasrole = !item.roles || item.roles.indexOf(r) !== -1
+          return hasrole !== true
+        })
+      }
+      if (!item.department || item.department.indexOf(this.department) !== -1) {
+        hasdepartment = true
+      }
+      return !item.hidden && hasrole && hasdepartment
     },
     hasOneShowingChild(children = [], parent) {
       const showingChildren = children.filter(item => {

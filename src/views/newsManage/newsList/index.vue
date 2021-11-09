@@ -114,6 +114,7 @@ export default {
       this.$store.dispatch('user/getNews').then(response => {
         this.htmlNews = response.data.htmlNews
         this.fileNews = response.data.fileNews
+        console.log(this.htmlNews)
       })
     },
     gotoNews(news) {

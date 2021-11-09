@@ -1,6 +1,7 @@
-import { login, logout, getInfo, selfSetting, getNewsTypes, newsSave, getNews, showNews, newsEdit } from '@/api/user'
+import { login, logout, getInfo, selfSetting, getUnits } from '@/api/user'
 import { studentRegistration, teachingTeacherRegistration, otherStuffRegistration, officeTeacherRegistration } from '@/api/user'
-import { browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse } from '@/api/user'
+import { browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse, getCourses } from '@/api/user'
+import { getNewsTypes, newsSave, getNews, showNews, newsEdit } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import ElementUI from 'element-ui'
@@ -17,7 +18,8 @@ const getDefaultState = () => {
     birthDate: new Date(),
     phoneNumber: '',
     headImg: new ArrayBuffer(),
-    password: ''
+    password: '',
+    department: ''
   }
 }
 
@@ -54,6 +56,9 @@ const mutations = {
   },
   SET_PASSWORD: (state, password) => {
     state.password = password
+  },
+  SET_DEPARTMENT: (state, department) => {
+    state.department = department
   }
 }
 
@@ -86,6 +91,9 @@ const actions = {
         commit('SET_GENDER', res.gender)
         commit('SET_PHONENUM', res.phone_number)
         commit('SET_BIRTHDATE', res.birthdate)
+        if (res.department !== null) {
+          commit('SET_DEPARTMENT', res.department)
+        }
         commit('SET_HEADIMG', 'https://localhost:13001' + res.picture)
         resolve(res)
       }).catch(error => {
@@ -156,6 +164,16 @@ const actions = {
     })
   },
 
+  getCourses({ commit }, userCode) {
+    return new Promise((resolve, reject) => {
+      getCourses(userCode).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
   getReportCard({ commit }) {
     var url = '/api/StudentIndex/GetReportCard?' + 'urlCode=' + state.code
     return new Promise((resolve, reject) => {
@@ -180,13 +198,20 @@ const actions = {
     })
   },
 
+  getUnits({ commit }) {
+    return new Promise((resolve, reject) => {
+      getUnits().then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
   userRegister({ commit }, data) {
     return new Promise((resolve, reject) => {
-      console.log(data.userRole)
-      console.log(data)
       switch (data.userRole) {
         case '学生':
-          console.log(111111111)
           studentRegistration(data).then(response => {
             ElementUI.Message.info(response.content)
             resolve(response)
@@ -242,9 +267,6 @@ const actions = {
         reject(error)
       })
     })
-  },
-  getHistoryOrDetails({ commit }) {
-
   },
 
   newsSave({ commit }, dto) {

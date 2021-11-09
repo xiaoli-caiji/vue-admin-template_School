@@ -3,7 +3,7 @@
     <h3>{{ newsTitle }}</h3>
     <p>
       编辑时间：<a>{{ newsEditTime }}</a>
-      <a>{{ '    ????     ' }}</a>
+      <a>{{ '&nbsp;' }}</a>
       作者：<a>{{ newsEditer }}</a>
     </p>
     <div v-html="newsContent" />

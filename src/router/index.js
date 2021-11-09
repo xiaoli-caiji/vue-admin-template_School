@@ -33,8 +33,8 @@ import Layout from '@/layout'
 export const constantRoutes = [
   {
     path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
+    component: () => import('@/views/login/index')
+    // hidden: true
   },
 
   {
@@ -49,9 +49,9 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: 'Dashboard',
+      name: '首页',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'dashboard' }
     }]
   },
 
@@ -77,6 +77,12 @@ export const constantRoutes = [
       name: 'StudentIndex',
       component: () => import('@/views/student/index'),
       meta: { title: '学生首页', icon: 'dashboard' }
+    },
+    {
+      path: 'choosenCourses',
+      name: '已选课程',
+      component: () => import('@/views/student/choosenCourses'),
+      meta: { title: '已选课程', icon: 'table' }
     }]
   },
   {
@@ -188,6 +194,7 @@ export const constantRoutes = [
       {
         path: 'newsEdit',
         name: '新闻编辑',
+        hidden: true,
         component: () => import('@/views/newsManage/newsEdit/index'),
         meta: { title: '新闻编辑', icon: '业务设置' },
         params: { key: 'currentNews', value: 'news' }
@@ -195,6 +202,7 @@ export const constantRoutes = [
       {
         path: 'newsShow',
         name: '新闻浏览',
+        hidden: true,
         component: () => import('@/views/newsManage/newsHtml/index'),
         meta: { title: '新闻浏览', icon: '业务设置' },
         params: { key: 'currentNews', value: 'news' }
@@ -202,6 +210,7 @@ export const constantRoutes = [
       {
         path: 'tinymceDemo',
         name: '编辑器示例',
+        hidden: true,
         component: () => import('@/views/tinymce/tinymce'),
         meta: { title: '编辑器示例', icon: '业务设置' }
       }

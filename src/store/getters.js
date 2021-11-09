@@ -11,6 +11,7 @@ const getters = {
   phoneNumber: state => state.user.phoneNumber,
   birthDate: state => state.user.birthDate,
   gender: state => state.user.gender,
-  password: state => state.user.password
+  password: state => state.user.password,
+  department: state => state.user.department
 }
 export default getters

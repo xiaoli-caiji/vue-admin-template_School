@@ -72,6 +72,7 @@ import ElementUI from 'element-ui'
 import { mapGetters } from 'vuex'
 
 export default {
+  inject: ['reload'],
   data() {
     return {
       selfSettingForm: {
@@ -124,8 +125,11 @@ export default {
       }
     },
     saveChange() {
+      var that = this
       console.log(this.selfSettingForm)
       this.$store.dispatch('user/saveChange', this.selfSettingForm).then(response => {
+        // 这里刷新无反应
+        that.reload()
         this.$store.dispatch('user/getInfo')
         ElementUI.Message.info(response.content)
       })

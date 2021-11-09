@@ -153,6 +153,17 @@ export default {
         // https://www.tiny.cloud/docs-3x/reference/configuration/Configuration3x@convert_urls/
         // https://stackoverflow.com/questions/5196205/disable-tinymce-absolute-to-relative-url-conversions
         convert_urls: false
+        // images_upload_handler(blobInfo, success, failure) {
+        //   const url = response.data.qiniu_url
+        //   const formData = new FormData()
+        //   formData.append('token', response.data.qiniu_token)
+        //   formData.append('key', response.data.qiniu_key)
+        //   formData.append('file', blobInfo.blob(), url)
+        //   upload(formData).then(() => {
+        //     success(url)
+        //     progress(100)
+        //   })
+        // }
         // 整合七牛上传
         // images_dataimg_filter(img) {
         //   setTimeout(() => {
@@ -205,7 +216,20 @@ export default {
       window.tinymce.get(this.tinymceId).getContent()
     },
     imageSuccessCBK(arr) {
-      arr.forEach(v => window.tinymce.get(this.tinymceId).insertContent(`<img class="wscnph" src="${v.url}" >`))
+      console.log('上传', arr)
+      arr.forEach(v => {
+        window.tinymce.get(this.tinymceId).insertContent(`<img class="wscnph" style="max-width:200px;height:auto" src="${v}" >`)
+      })
+      // const _this = this
+      // arr.forEach(v => {
+      //   var htmltxt = ''
+      //   if (v.type === 'image') {
+      //     htmltxt = `<img class="wscnph" style="max-width:100%;height:auto" src="${v}" >`
+      //   } else {
+      //     htmltxt = `<iframe width="560px" height="315" src="${v.url}" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe> `
+      //   }
+      //   window.tinymce.get(_this.tinymceId).insertContent(htmltxt)
+      // })
     }
   }
 }

@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import store from '@/store'
+// import store from '@/store'
 import ElementUI from 'element-ui'
 import { mapGetters } from 'vuex'
 // import { validUserCode } from '@/utils/validate'
@@ -77,11 +77,11 @@ export default {
     }
     return {
       loginForm: {
-        UserName: 'OT0002',
+        UserName: '202123030101',
         ClientId: 'ro.client',
         ClientSecrets: 'secret',
         GrantType: 'password',
-        Password: '219281'
+        Password: '107928'
       },
       checkVlue: false,
       loginRules: {
@@ -100,7 +100,9 @@ export default {
       'gender',
       'birthDate',
       'headImg',
-      'phoneNumber'
+      'phoneNumber',
+      'role',
+      'token'
     ])
   },
   watch: {
@@ -111,14 +113,7 @@ export default {
       immediate: true
     }
   },
-  // mounted: function() {
-  //   this.selfInfo()
-  // },
   methods: {
-    // selfInfo() {
-    //   this.loginForm.UserName = this.code
-    //   this.loginForm.Password = this.password
-    // },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -130,6 +125,7 @@ export default {
       })
     },
     handleLogin() {
+      var that = this
       this.$refs.loginForm.validate(async valid => {
         if (valid) {
           this.loading = true
@@ -141,10 +137,21 @@ export default {
           params.append('password', this.loginForm.Password)
           this.$store.dispatch('user/login', params).then(res => {
             console.log(111111)
-            if (store.state.user.token) {
-              this.$store.dispatch('user/getInfo', store.state.user.token).then((res) => {
-                console.log(res)
-                this.$router.push({ path: '/' })
+            if (that.token) {
+              this.$store.dispatch('user/getInfo', that.token).then((res) => {
+                console.log(res.role)
+                if (res.role.indexOf('学生') !== -1) {
+                  that.$router.push({ path: '/student' })
+                } else if (that.role.indexOf('教师') !== -1) {
+                  that.$router.push({ path: '/teachingTeacher' })
+                } else if (that.role.indexOf('办公老师') !== -1) {
+                  that.$router.push({ path: '/officeTeacher' })
+                } else if (that.role.indexOf('其他职工') !== -1) {
+                  that.$router.push({ path: '/otherStuff' })
+                } else {
+                  that.$router.push({ path: '/404' })
+                }
+                // this.$router.push({ path: '/' })
               })
               ElementUI.Message.info('登陆成功！')
             }

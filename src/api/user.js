@@ -42,6 +42,13 @@ export function selfSetting(data) {
   })
 }
 
+export function getUnits() {
+  return request({
+    url: '/api/UserRegistration/GetUnits',
+    method: 'get'
+  })
+}
+
 export function studentRegistration(data) {
   return request({
     url: '/api/UserRegistration/StudentRegistration',
@@ -86,6 +93,14 @@ export function chooseCourse(data) {
   return request({
     url: '/api/StudentIndex/ChoosenCourse',
     method: 'post',
+    data
+  })
+}
+
+export function getCourses(data) {
+  return request({
+    url: '/api/StudentIndex/GetCourses',
+    method: 'get',
     data
   })
 }
@@ -140,6 +155,17 @@ export function showNews() {
 export function newsEdit(data) {
   return request({
     url: '/api/NewsManage/NewsEdit',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    method: 'post',
+    data
+  })
+}
+
+export function htmlImgUpload(data) {
+  return request({
+    url: '/api/NewsManage/UpLoadHtmlPictures',
     headers: {
       'Content-Type': 'multipart/form-data'
     },

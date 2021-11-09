@@ -115,10 +115,7 @@ export default {
   },
   methods: {
     onCancel() {
-      console.log(this.$parent.$data)
-      this.$close()
-      this.$parent.$refs.newsEditDialog.close()
-      this.$parent.$data.dialogFormVisible = false
+      this.reload()
       this.$message({
         message: 'cancel!',
         type: 'warning'
@@ -167,7 +164,8 @@ export default {
       this.$refs.editor.pictureList.forEach(p => {
         that.dto.append('NewsPictures', p)
       })
-      this.form.NewsUploadTime = new Date()
+      var t = new Date()
+      this.form.NewsUploadTime = t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds()
       if (this.form.NewsCoverType === '标题') {
         this.form.NewsCover = this.form.NewsName
       }
@@ -181,13 +179,11 @@ export default {
       this.dto.append('NewsWriter', this.name)
       this.dto.append('NewsCoverType', this.form.NewsCoverType)
       this.dto.append('NewsContent', this.content)
-      console.log(this.form)
       this.$store.dispatch('user/newsEdit', this.dto).then(response => {
         ElementUI.Message.info(response.content)
         this.$parent.$data.dialogFormVisible = false
         this.$nextTick(item => {
-          that.dto = new FormData()
-          that.reload
+          that.reload()
         })
       })
     },

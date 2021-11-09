@@ -3,20 +3,20 @@
     <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
       upload
     </el-button>
-    <el-dialog :visible.sync="dialogVisible">
+    <el-dialog :visible.sync="dialogVisible" :append-to-body="true">
       <el-upload
         ref="tinymceUpload"
         :auto-upload="false"
         accept="*.*"
         :multiple="true"
-        :file-list="fileList"
+        :file-list="fileListBefore"
         :show-file-list="true"
         :on-remove="handleRemove"
         :on-success="handleSuccess"
         :on-change="picturesUpload"
         :before-upload="beforeUpload"
         class="editor-slide-upload"
-        action="https://localhost:13001/api/NewsManage/NewsSave"
+        action="https://localhost:13001/api/NewsManage/UpLoadHtmlPictures"
         list-type="picture-card"
       >
         <el-button size="small" type="primary">
@@ -24,10 +24,10 @@
         </el-button>
       </el-upload>
       <el-button @click="dialogVisible = false">
-        Cancel
+        取消
       </el-button>
       <el-button type="primary" @click="handleSubmit">
-        Confirm
+        确定
       </el-button>
     </el-dialog>
   </div>
@@ -35,9 +35,11 @@
 
 <script>
 // import { getToken } from 'api/qiniu'
+import { htmlImgUpload } from '@/api/user'
 
 export default {
   name: 'EditorSlideUpload',
+  inject: ['reload'],
   props: {
     color: {
       type: String,
@@ -49,32 +51,41 @@ export default {
       dialogVisible: false,
       listObj: {},
       fileList: [],
-      pictures: []
+      pictures: [],
+      fileListBefore: [],
+      pictureList: new FormData()
     }
   },
   methods: {
     picturesUpload(file, fileList) {
-      this.fileList = fileList
+      var that = this
+      this.fileListBefore = fileList
+      this.fileList = []
+      fileList.forEach(f => {
+        that.fileList.push(f.raw)
+      })
     },
     checkAllSuccess() {
       return Object.keys(this.listObj).every(item => this.listObj[item].hasSuccess)
     },
     handleSubmit() {
+      var that = this
+      console.log('fileList', this.fileList)
       this.fileList.forEach(f => {
-        this.pictures.push(f.raw)
+        that.pictureList.append('pictureUrls', f)
       })
-      this.$parent.$data.pictureList = this.pictures
-      const arr = Object.keys(this.listObj).map(v => this.listObj[v])
-      if (!this.checkAllSuccess()) {
-        this.$message('Please wait for all images to be uploaded successfully. If there is a network problem, please refresh the page and upload again!')
-        return
-      }
-      this.$emit('successCBK', arr)
-      this.listObj = {}
+      htmlImgUpload(this.pictureList).then(response => {
+        that.pictures = response.data
+        that.$emit('successCBK', that.pictures)
+        console.log(response)
+      })
       this.fileList = []
+      this.pictureList = new FormData()
       this.dialogVisible = false
+      // that.reload()
     },
     handleSuccess(response, file) {
+      console.log(response)
       const uid = file.uid
       const objKeyArr = Object.keys(this.listObj)
       for (let i = 0, len = objKeyArr.length; i < len; i++) {

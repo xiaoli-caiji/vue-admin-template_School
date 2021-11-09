@@ -1,9 +1,16 @@
 <template>
   <div class="dashboard-container" auto-complete="on">
-    <div class="dashboard-text">姓名: {{ name }} </div>
-    <div class="body">
-      {{ '这里是缅甸北部，我生长的地方;欢迎来到我的世界，娇贵的小公主。' }}
+    <div>
+      <ul>
+        <li>
+          <a href="http://localhost:9528/#/login" target="_blank">网上服务大厅</a>
+        </li>
+      </ul>
     </div>
+    <!-- <div class="dashboard-text"><h3>姓名: {{ name }} </h3></div>
+    <div class="body">
+      <h4>{{ '这里是缅甸北部，我生长的地方;欢迎来到我的世界，娇贵的小公主。' }}</h4>
+    </div> -->
     <div class="carousel-container">
       <el-carousel id="card" v-model="NewsCoverIsImg" :interval="4000" type="card" arrow="always" height="200px">
         <el-carousel-item
@@ -70,10 +77,17 @@ export default {
         }
       })
       window.open(url.href, '_blank')
-      // window.open('http://localhost:9528/#/newsManage/newsShow?currentNews=' + news)
     },
-    watchHtmlNews(url) {
-      window.open('http://localhost:9528/#/newsManage/newsShow')
+    watchHtmlNews(news) {
+      sessionStorage.setItem('currentNews', JSON.stringify(news))
+      const url = this.$router.resolve({
+        name: '新闻浏览',
+        path: 'newsShow',
+        query: {
+          newsId: news.id
+        }
+      })
+      window.open(url.href, '_blank')
     }
   }
 }
@@ -104,7 +118,7 @@ $bg:#06f0f0d2;
   width: 100%;
   background: $bg
 }
-$bg:hsl(340, 100%, 50%);
+$bg:hsla(155, 80%, 80%, 0.726);
 .htmlLink {
   &-text {
     font-size: 60px;

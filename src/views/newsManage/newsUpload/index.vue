@@ -181,8 +181,9 @@ export default {
   },
   methods: {
     onCancel() {
+      this.$router.push({ path: 'newsList' })
       this.$message({
-        message: 'cancel!',
+        message: '已取消编辑，并跳转至管理页面!',
         type: 'warning'
       })
     },
@@ -211,7 +212,7 @@ export default {
     onSubmit() {
       var that = this
       var t = new Date()
-      this.form.NewsUploadTime = t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate()
+      this.form.NewsUploadTime = t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds()
       // var tt = this.form.NewsStartTime.getFullYear() + '-' + (this.form.NewsStartTime.getMonth() + 1) + '-' + this.form.NewsStartTime.getDate() + ' ' + this.form.NewsStartTime.getHours() + ':' + this.form.NewsStartTime.getMinutes() + ':' + this.form.NewsStartTime.getSeconds()
       // var et = this.form.NewsEndTime.getFullYear() + '-' + (this.form.NewsEndTime.getMonth() + 1) + '-' + this.form.NewsEndTime.getDate() + ' ' + this.form.NewsEndTime.getHours() + ':' + this.form.NewsEndTime.getMinutes() + ':' + this.form.NewsEndTime.getSeconds()
       // var ut = this.form.NewsUploadTime.getFullYear() + '-' + (this.form.NewsUploadTime.getMonth() + 1) + '-' + this.form.NewsUploadTime.getDate() + ' ' + this.form.NewsUploadTime.getHours() + ':' + this.form.NewsUploadTime.getMinutes() + ':' + this.form.NewsUploadTime.getSeconds()
@@ -238,7 +239,7 @@ export default {
     onSubmitOnline() {
       var that = this
       var t = new Date()
-      this.form.NewsUploadTime = t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate()
+      this.form.NewsUploadTime = t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate() + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds()
       if (this.$refs.editor.pictureList.length !== 0) {
         this.$refs.editor.pictureList.forEach(p => {
           that.dto.append('NewsPictures', p)
