@@ -97,11 +97,10 @@ export function chooseCourse(data) {
   })
 }
 
-export function getCourses(data) {
+export function getCourses(url1) {
   return request({
-    url: '/api/StudentIndex/GetCourses',
-    method: 'get',
-    data
+    url: url1,
+    method: 'get'
   })
 }
 

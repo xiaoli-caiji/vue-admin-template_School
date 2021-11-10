@@ -64,7 +64,7 @@ export default {
     ])
   },
   methods: {
-    hasShowing(item, r) {
+    hasShowing(item) {
       var hasrole = Boolean(false)
       var hasdepartment = Boolean(false)
       if (this.role !== null) {

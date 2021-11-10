@@ -165,8 +165,9 @@ const actions = {
   },
 
   getCourses({ commit }, userCode) {
+    var url = '/api/StudentIndex/GetCourses?userCode=' + userCode
     return new Promise((resolve, reject) => {
-      getCourses(userCode).then(response => {
+      getCourses(url).then(response => {
         resolve(response)
       }).catch(error => {
         reject(error)

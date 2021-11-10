@@ -140,7 +140,8 @@ export default {
             if (that.token) {
               this.$store.dispatch('user/getInfo', that.token).then((res) => {
                 console.log(res.role)
-                if (res.role.indexOf('学生') !== -1) {
+                if (that.role.indexOf('学生') !== -1) {
+                  console.log('?????????')
                   that.$router.push({ path: '/student' })
                 } else if (that.role.indexOf('教师') !== -1) {
                   that.$router.push({ path: '/teachingTeacher' })

@@ -46,7 +46,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: 'dashboard',
     children: [{
       path: 'dashboard',
       name: '首页',
@@ -69,21 +69,26 @@ export const constantRoutes = [
 
   {
     path: '/student',
+    name: '学生首页',
     component: Layout,
-    redirect: '/student/index',
+    redirect: 'index',
+    // roles: ['学生'],
+    meta: { title: '学生首页', icon: 'dashboard' },
     roles: ['学生'],
-    children: [{
-      path: 'index',
-      name: 'StudentIndex',
-      component: () => import('@/views/student/index'),
-      meta: { title: '学生首页', icon: 'dashboard' }
-    },
-    {
-      path: 'choosenCourses',
-      name: '已选课程',
-      component: () => import('@/views/student/choosenCourses'),
-      meta: { title: '已选课程', icon: 'table' }
-    }]
+    children: [
+      {
+        path: 'index',
+        name: 'StudentIndex',
+        component: () => import('@/views/student/index'),
+        meta: { title: '学生首页', icon: 'dashboard' }
+      },
+      {
+        path: 'choosenCourses',
+        name: '已选课程',
+        component: () => import('@/views/student/choosenCourses'),
+        meta: { title: '已选课程', icon: 'table' }
+      }
+    ]
   },
   {
     path: '/teachingTeacher',
@@ -121,7 +126,6 @@ export const constantRoutes = [
       meta: { title: '职工首页', icon: 'dashboard' }
     }]
   },
-
   {
     path: '/course',
     component: Layout,

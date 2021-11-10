@@ -5,25 +5,29 @@
         <!-- <span class="svg-container">
           <svg-icon icon-class="course" />
         </span> -->
-        <el-input
-          ref="AcademicName"
-          v-model="quereForm.AcademicName"
-          placeholder="AcademicName"
-          name="AcademicName"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
-        />
+        <el-select v-model="quereForm.AcademicName" placeholder="请选择学院">
+          <el-option
+            v-for="(item,index) in academics"
+            :key="index"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item prop="CourseName">
-        <span class="svg-container">
-          <svg-icon icon-class="course" />
-        </span>
+        <!-- <el-select v-model="quereForm.CourseName" placeholder="请选择课程">
+          <el-option
+            v-for="(item,index) in courses"
+            v-show="showOrNot(item)"
+            :key="index"
+            :label="item.courseName"
+            :value="item.courseName"
+          />
+        </el-select> -->
         <el-input
           ref="CourseName"
           v-model="quereForm.CourseName"
-          placeholder="CourseName"
-          name="CourseName"
+          placeholder="课程名"
           type="text"
           tabindex="2"
           auto-complete="on"
@@ -36,7 +40,7 @@
         <el-input
           ref="TeachingTeacher"
           v-model="quereForm.TeachingTeacher"
-          placeholder="TeachingTeacher"
+          placeholder="授课老师"
           name="TeachingTeacher"
           type="text"
           tabindex="3"
@@ -114,23 +118,30 @@
 </template>
 
 <script>
-// import user from '@/store/modules/user'
+import { mapGetters } from 'vuex'
 
 export default {
-  // el: '#App',
   name: 'Course',
+  inject: ['reload'],
   data() {
     return {
       quereForm: {
-        AcademicName: '信通',
+        AcademicName: '',
         CourseName: '',
         TeachingTeacher: '',
         buttonLoading: false
       },
       list: [],
       listLoading: false,
-      courseCode: ''
+      courseCode: '',
+      academics: [],
+      courses: []
     }
+  },
+  computed: {
+    ...mapGetters([
+      'code'
+    ])
   },
   watch: {
     $route: {
@@ -140,8 +151,34 @@ export default {
       immediate: true
     }
   },
+  mounted: function() {
+    this.getAcademicAndCourses()
+  },
   methods: {
     quere() {
+      // var that = this
+      // var hasAcademic = false
+      // var hasCourse = false
+      // var hasTeacher = false
+      // this.list = []
+      // this.courses.forEach(c => {
+      //   hasAcademic = false
+      //   hasCourse = false
+      //   hasTeacher = false
+      //   c.academics.some(ca => {
+      //     hasAcademic = !that.quereForm.AcademicName || ca === that.quereForm.AcademicName
+      //     return hasAcademic === true
+      //   })
+      //   if (c.TeachingTeacher === that.quereForm.TeachingTeacher || !that.quereForm.TeachingTeacher) {
+      //     hasTeacher = true
+      //   }
+      //   if (c.courseName === that.quereForm.CourseName || !that.quereForm.CourseName) {
+      //     hasCourse = true
+      //   }
+      //   if (hasCourse && hasTeacher && hasAcademic) {
+      //     that.list.push(c)
+      //   }
+      // })
       this.loading = true
       this.$store.dispatch('user/browseCourse', this.quereForm).then(response => {
         this.list = response.data
@@ -152,7 +189,6 @@ export default {
         this.loading = false
       })
     },
-
     chooseCourse(courseCode) {
       this.courseCode = courseCode
       this.loading = true
@@ -172,11 +208,20 @@ export default {
         this.loading = false
       })
     },
-
-    hasChoosen() {
-      this.loading = true
-      this.$store.dispatch('user/')
+    getAcademicAndCourses() {
+      this.$store.dispatch('user/getUnits', this.code).then(response => {
+        this.academics = response.data.academic
+      })
     }
+    // showOrNot(item) {
+    //   var show = false
+    //   var that = this
+    //   item.academics.some(a => {
+    //     show = !that.quereForm.AcademicName || a === that.quereForm.AcademicName
+    //     return show === true
+    //   })
+    //   return show
+    // }
   }
 }
 </script>
