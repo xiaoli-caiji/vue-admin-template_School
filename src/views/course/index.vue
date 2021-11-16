@@ -2,9 +2,6 @@
   <div class="course-container">
     <el-form ref="quereForm" :model="quereForm">
       <el-form-item prop="AcademicName">
-        <!-- <span class="svg-container">
-          <svg-icon icon-class="course" />
-        </span> -->
         <el-select v-model="quereForm.AcademicName" placeholder="请选择学院">
           <el-option
             v-for="(item,index) in academics"
@@ -15,15 +12,6 @@
         </el-select>
       </el-form-item>
       <el-form-item prop="CourseName">
-        <!-- <el-select v-model="quereForm.CourseName" placeholder="请选择课程">
-          <el-option
-            v-for="(item,index) in courses"
-            v-show="showOrNot(item)"
-            :key="index"
-            :label="item.courseName"
-            :value="item.courseName"
-          />
-        </el-select> -->
         <el-input
           ref="CourseName"
           v-model="quereForm.CourseName"
@@ -73,27 +61,27 @@
           {{ scope.row.academics.join('、') }}
         </template>
       </el-table-column>
-      <el-table-column label="学分" align="center">
+      <el-table-column label="学分" align="center" width="75px">
         <template slot-scope="scope">
           {{ scope.row.courseCredit }}
         </template>
       </el-table-column>
-      <el-table-column label="学时" align="center">
+      <el-table-column label="学时" align="center" width="75px">
         <template slot-scope="scope">
           {{ scope.row.courseHour }}
         </template>
       </el-table-column>
-      <el-table-column label="授课教师" align="center">
+      <el-table-column label="授课教师" align="center" width="75px">
         <template slot-scope="scope">
           {{ scope.row.teachingTeacher }}
         </template>
       </el-table-column>
-      <el-table-column label="课程容量" align="center">
+      <el-table-column label="课程容量" align="center" width="75px">
         <template slot-scope="scope">
           {{ scope.row.courseCapacity }}
         </template>
       </el-table-column>
-      <el-table-column label="选课人数" align="center">
+      <el-table-column label="选课人数" align="center" width="75px">
         <template slot-scope="scope">
           {{ scope.row.courseChoosenNumber }}
         </template>
@@ -103,13 +91,30 @@
           {{ scope.row.courseTime }}
         </template>
       </el-table-column>
+      <el-table-column label="选课百分比" align="center">
+        <template slot-scope="scope">
+          <div v-if="scope.row.choosenOrNot === '已选'">
+            {{ scope.row.percentage }}
+          </div>
+          <el-input
+            v-if="scope.row.choosenOrNot === '未选'"
+            v-model="percentage[scope.row.courseCode]"
+            type="number"
+            :disabled="scope.row.percentageLeft===0?true:false"
+            :placeholder="scope.row.percentageLeft>0?'最大值为' + scope.row.percentageLeft:'已没有百分比数，无法选课！' "
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="选项" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.choosenOrNot === '已选'">
             <el-button type="text" disabled>已选</el-button>
           </span>
+          <span v-else-if="scope.row.choosenOrNot === '未选' && scope.row.percentageLeft === 0">
+            <el-button @click="gotoCourseChoosenList()">去管理选课</el-button>
+          </span>
           <span v-else>
-            <el-button :id="scope.row.courseCode" @click.native.prevent="chooseCourse(scope.row.courseCode)">选课</el-button>
+            <el-button :id="scope.row.courseCode" @click.native.prevent="chooseCourse(scope)">选课</el-button>
           </span>
         </template>
       </el-table-column>
@@ -118,6 +123,7 @@
 </template>
 
 <script>
+import ElementUI from 'element-ui'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -135,7 +141,8 @@ export default {
       listLoading: false,
       courseCode: '',
       academics: [],
-      courses: []
+      courses: [],
+      percentage: {}
     }
   },
   computed: {
@@ -156,72 +163,50 @@ export default {
   },
   methods: {
     quere() {
-      // var that = this
-      // var hasAcademic = false
-      // var hasCourse = false
-      // var hasTeacher = false
-      // this.list = []
-      // this.courses.forEach(c => {
-      //   hasAcademic = false
-      //   hasCourse = false
-      //   hasTeacher = false
-      //   c.academics.some(ca => {
-      //     hasAcademic = !that.quereForm.AcademicName || ca === that.quereForm.AcademicName
-      //     return hasAcademic === true
-      //   })
-      //   if (c.TeachingTeacher === that.quereForm.TeachingTeacher || !that.quereForm.TeachingTeacher) {
-      //     hasTeacher = true
-      //   }
-      //   if (c.courseName === that.quereForm.CourseName || !that.quereForm.CourseName) {
-      //     hasCourse = true
-      //   }
-      //   if (hasCourse && hasTeacher && hasAcademic) {
-      //     that.list.push(c)
-      //   }
-      // })
       this.loading = true
       this.$store.dispatch('user/browseCourse', this.quereForm).then(response => {
         this.list = response.data
-        console.log(response)
+        console.log(this.list)
         this.loading = false
       }).catch(() => {
         console.log('err')
         this.loading = false
       })
     },
-    chooseCourse(courseCode) {
-      this.courseCode = courseCode
+    chooseCourse(scope) {
+      this.courseCode = scope.row.courseCode
       this.loading = true
       this.buttonLoading = true
-      var obj = document.getElementById(courseCode)
-      console.log(courseCode)
-      this.$store.dispatch('user/chooseCourse', this.courseCode).then(response => {
-        if (response.type === 200) {
-          obj.type = Text
-          obj.disabled = true
-          this.buttonLoading = false
-          obj.innerText = '已选'
-        }
-        this.loading = false
-      }).catch(() => {
-        console.log('err')
-        this.loading = false
-      })
+      var obj = document.getElementById(scope.row.courseCode)
+      if (this.percentage[scope.row.courseCode] <= scope.row.percentageLeft && this.percentage[scope.row.courseCode] >= 1) {
+        const data = { CourseCode: this.courseCode, UserCode: this.code, Percentage: this.percentage[this.courseCode] }
+        this.$store.dispatch('user/chooseCourse', data).then(response => {
+          if (response.type === 200) {
+            obj.type = Text
+            obj.disabled = true
+            this.buttonLoading = false
+            this.quere()
+            // obj.innerText = '已选'
+          }
+          this.loading = true
+        }).catch(() => {
+          console.log('err')
+          this.loading = false
+        })
+      } else {
+        // obj.innerText = '请输入正确的百分比！'
+        ElementUI.Message.error('选课失败！请输入正确的百分比！')
+        // ElementUI.Message.info()
+      }
     },
     getAcademicAndCourses() {
       this.$store.dispatch('user/getUnits', this.code).then(response => {
         this.academics = response.data.academic
       })
+    },
+    gotoCourseChoosenList() {
+      this.$router.push('choosenCourses')
     }
-    // showOrNot(item) {
-    //   var show = false
-    //   var that = this
-    //   item.academics.some(a => {
-    //     show = !that.quereForm.AcademicName || a === that.quereForm.AcademicName
-    //     return show === true
-    //   })
-    //   return show
-    // }
   }
 }
 </script>

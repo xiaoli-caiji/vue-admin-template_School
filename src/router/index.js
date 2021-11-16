@@ -69,16 +69,21 @@ export const constantRoutes = [
 
   {
     path: '/student',
-    name: '学生首页',
     component: Layout,
-    redirect: 'index',
-    // roles: ['学生'],
-    meta: { title: '学生首页', icon: 'dashboard' },
+    name: 'Student',
+    redirect: '/student/studentIndex',
+    meta: { title: '学生的首页', icon: 'dashboard' },
     roles: ['学生'],
     children: [
       {
-        path: 'index',
-        name: 'StudentIndex',
+        path: 'browseAndChooseCourse',
+        name: '选课系统',
+        component: () => import('@/views/course/index'),
+        meta: { title: '选课系统', icon: 'dashboard' }
+      },
+      {
+        path: 'studentIndex',
+        name: '学生首页',
         component: () => import('@/views/student/index'),
         meta: { title: '学生首页', icon: 'dashboard' }
       },
@@ -87,6 +92,12 @@ export const constantRoutes = [
         name: '已选课程',
         component: () => import('@/views/student/choosenCourses'),
         meta: { title: '已选课程', icon: 'table' }
+      },
+      {
+        path: 'reportCard',
+        name: '我的成绩单',
+        component: () => import('@/views/reportCard/index'),
+        meta: { title: '成绩单查询', icon: 'table' }
       }
     ]
   },
@@ -95,92 +106,57 @@ export const constantRoutes = [
     component: Layout,
     roles: ['教师'],
     redirect: '/teachingTeacher/index',
-    children: [{
-      path: 'index',
-      name: '教师首页',
-      component: () => import('@/views/teachingTeacher/index'),
-      meta: { title: '教师首页', icon: 'dashboard' }
-    }]
+    meta: { title: '教师首页', icon: 'dashboard' },
+    children: [
+      {
+        path: 'index',
+        name: '教师首页',
+        component: () => import('@/views/teachingTeacher/index'),
+        meta: { title: '教师首页', icon: 'dashboard' }
+      },
+      {
+        path: 'writeIn',
+        name: '成绩录入',
+        component: () => import('@/views/reportCard/writeIn'),
+        meta: { title: '成绩录入', icon: 'table' }
+      }
+    ]
   },
   {
     path: '/officeTeacher',
     component: Layout,
     redirect: '/officeTeacher/index',
+    meta: { title: '办公老师首页', icon: 'dashboard' },
     roles: ['办公老师'],
-    children: [{
-      path: 'index',
-      name: '办公老师首页',
-      component: () => import('@/views/officeTeacher/index'),
-      meta: { title: '办公老师首页', icon: 'dashboard' }
-    }]
-  },
-  {
-    path: '/otherStuff',
-    component: Layout,
-    redirect: '/otherStuff/index',
-    roles: ['其他职工'],
-    children: [{
-      path: 'index',
-      name: '职工首页',
-      component: () => import('@/views/otherStuff/index'),
-      meta: { title: '职工首页', icon: 'dashboard' }
-    }]
-  },
-  {
-    path: '/course',
-    component: Layout,
-    redirect: '/course/index',
-    roles: ['学生'],
-    children: [{
-      path: 'index',
-      name: '选课系统',
-      component: () => import('@/views/course/index'),
-      meta: { title: '选课系统', icon: 'dashboard' }
-    }]
-  },
-  {
-    path: '/userRegister',
-    component: Layout,
-    redirect: '/userRegister/index',
-    roles: ['办公老师'],
-    children: [{
-      path: 'index',
-      name: '用户管理系统',
-      component: () => import('@/views/userRegister/index'),
-      meta: { title: '用户管理系统', icon: 'dashboard' }
-    }]
-  },
-  {
-    path: '/reportCard',
-    component: Layout,
-    redirect: '/reportCard/index',
-    roles: ['学生'],
-    children: [{
-      path: 'index',
-      name: '我的成绩单',
-      component: () => import('@/views/reportCard/index'),
-      meta: { title: '成绩单查询', icon: 'table' }
-    }]
-  },
-  {
-    path: '/getStudent',
-    component: Layout,
-    redirect: '/reportCard/writeIn',
-    roles: ['教师'],
-    children: [{
-      path: 'writeIn',
-      name: '成绩录入',
-      component: () => import('@/views/reportCard/writeIn'),
-      meta: { title: '成绩录入', icon: 'table' }
-    }]
+    children: [
+      {
+        path: 'index',
+        name: '办公老师首页',
+        component: () => import('@/views/officeTeacher/index'),
+        meta: { title: '办公老师首页', icon: 'dashboard' }
+      },
+      {
+        path: 'userRegister',
+        name: '用户管理系统',
+        department: ['人员管理'],
+        component: () => import('@/views/userRegister/index'),
+        meta: { title: '用户管理系统', icon: 'dashboard' }
+      },
+      {
+        path: 'winCourse',
+        name: '选课系统开关',
+        department: ['学生科'],
+        component: () => import('@/views/officeTeacher/winCourse'),
+        meta: { title: '选课系统开关', icon: 'dashboard' }
+      }
+    ]
   },
   {
     path: '/newsManage',
-    component: Layout,
     name: 'newsManage',
+    component: Layout,
     redirect: 'newsList',
     meta: { title: '新闻管理站', icon: 'icons-top-06' },
-    roles: ['办公老师'],
     department: ['新闻'],
     children: [
       {
@@ -219,6 +195,18 @@ export const constantRoutes = [
         meta: { title: '编辑器示例', icon: '业务设置' }
       }
     ]
+  },
+  {
+    path: '/otherStuff',
+    component: Layout,
+    redirect: '/otherStuff/index',
+    roles: ['其他职工'],
+    children: [{
+      path: 'index',
+      name: '职工首页',
+      component: () => import('@/views/otherStuff/index'),
+      meta: { title: '职工首页', icon: 'dashboard' }
+    }]
   },
   {
     path: '/example',

@@ -104,6 +104,37 @@ export function getCourses(url1) {
   })
 }
 
+export function modifyPercentage(data) {
+  return request({
+    url: '/api/StudentIndex/ModifyPercentage',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteCourse(data) {
+  return request({
+    url: '/api/StudentIndex/DeleteCourse',
+    method: 'post',
+    data
+  })
+}
+
+export function getCoursesByTeacher() {
+  return request({
+    url: '/api/TeacherIndex/GetCoursesByTeacher',
+    method: 'get'
+  })
+}
+
+export function winCourse(data) {
+  return request({
+    url: '/api/TeacherIndex/WinCourse',
+    method: 'post',
+    data
+  })
+}
+
 export function getStudentAndCourse(urll) {
   return request({
     url: urll,

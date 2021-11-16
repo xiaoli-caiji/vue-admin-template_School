@@ -1,11 +1,10 @@
-import { login, logout, getInfo, selfSetting, getUnits } from '@/api/user'
+import { login, logout, getInfo, selfSetting, getUnits, deleteCourse, modifyPercentage, winCourse, getCoursesByTeacher } from '@/api/user'
 import { studentRegistration, teachingTeacherRegistration, otherStuffRegistration, officeTeacherRegistration } from '@/api/user'
 import { browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse, getCourses } from '@/api/user'
 import { getNewsTypes, newsSave, getNews, showNews, newsEdit } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import ElementUI from 'element-ui'
-// import { reject } from 'core-js/fn/promise'
 // import { resolve } from 'core-js/fn/promise'
 
 const getDefaultState = () => {
@@ -63,9 +62,7 @@ const mutations = {
 }
 
 const actions = {
-  // user login
   login({ commit }, UserInputDto) {
-    // const { UserCode, Password } = UserInputDto
     return new Promise((resolve, reject) => {
       login(UserInputDto).then(res => {
         commit('SET_TOKEN', res.access_token)
@@ -152,9 +149,10 @@ const actions = {
     })
   },
 
-  chooseCourse({ commit }, courseCode) {
+  chooseCourse({ commit }, data) {
+    console.log(data)
     return new Promise((resolve, reject) => {
-      chooseCourse({ CourseCode: courseCode, UserCode: state.code }).then(response => {
+      chooseCourse(data).then(response => {
         // console.log(response)
         ElementUI.Message.info(response.content)
         resolve(response)
@@ -168,6 +166,47 @@ const actions = {
     var url = '/api/StudentIndex/GetCourses?userCode=' + userCode
     return new Promise((resolve, reject) => {
       getCourses(url).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  modifyPercentage({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      modifyPercentage(data).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  deleteCourse({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      deleteCourse(data).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  getCoursesByTeacher({ commit }) {
+    return new Promise((resolve, reject) => {
+      getCoursesByTeacher().then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  winCourse({ commit }, data) {
+    console.log(data)
+    return new Promise((resolve, reject) => {
+      winCourse(data).then(response => {
         resolve(response)
       }).catch(error => {
         reject(error)

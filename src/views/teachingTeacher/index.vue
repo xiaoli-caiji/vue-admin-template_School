@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     gotoReportCard() {
-      this.$router.push({ path: '/getStudent' })
+      this.$router.push({ path: 'writeIn' })
     }
   }
 }

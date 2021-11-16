@@ -77,11 +77,11 @@ export default {
     }
     return {
       loginForm: {
-        UserName: '202123030101',
+        UserName: 'OT0004',
         ClientId: 'ro.client',
         ClientSecrets: 'secret',
         GrantType: 'password',
-        Password: '107928'
+        Password: '528982'
       },
       checkVlue: false,
       loginRules: {
@@ -136,12 +136,9 @@ export default {
           params.append('grant_type', this.loginForm.GrantType)
           params.append('password', this.loginForm.Password)
           this.$store.dispatch('user/login', params).then(res => {
-            console.log(111111)
             if (that.token) {
               this.$store.dispatch('user/getInfo', that.token).then((res) => {
-                console.log(res.role)
                 if (that.role.indexOf('学生') !== -1) {
-                  console.log('?????????')
                   that.$router.push({ path: '/student' })
                 } else if (that.role.indexOf('教师') !== -1) {
                   that.$router.push({ path: '/teachingTeacher' })
@@ -152,7 +149,6 @@ export default {
                 } else {
                   that.$router.push({ path: '/404' })
                 }
-                // this.$router.push({ path: '/' })
               })
               ElementUI.Message.info('登陆成功！')
             }

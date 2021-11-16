@@ -26,34 +26,56 @@
                 {{ scope.row.academics.join('、') }}
               </template>
             </el-table-column>
-            <el-table-column label="学分" align="center">
+            <el-table-column label="学分" align="center" width="75px">
               <template slot-scope="scope">
                 {{ scope.row.courseCredit }}
               </template>
             </el-table-column>
-            <el-table-column label="学时" align="center">
+            <el-table-column label="学时" align="center" width="75px">
               <template slot-scope="scope">
                 {{ scope.row.courseHour }}
               </template>
             </el-table-column>
-            <el-table-column label="授课教师" align="center">
+            <el-table-column label="授课教师" align="center" width="75px">
               <template slot-scope="scope">
                 {{ scope.row.teachingTeacher }}
               </template>
             </el-table-column>
-            <el-table-column label="课程容量" align="center">
+            <el-table-column label="课程容量" align="center" width="75px">
               <template slot-scope="scope">
                 {{ scope.row.courseCapacity }}
               </template>
             </el-table-column>
-            <el-table-column label="选课人数" align="center">
+            <el-table-column label="选课状态" align="center" width="75px">
               <template slot-scope="scope">
-                {{ scope.row.courseChoosenNumber }}
+                <span v-if="scope.row.courseState.indexOf('未') !== -1">
+                  {{ '未中签' }}
+                </span>
+                <span v-else-if="scope.row.courseState === '等待结果'">
+                  {{ '等待结果' }}
+                </span>
+                <span v-else>
+                  {{ '中签' }}
+                </span>
               </template>
             </el-table-column>
             <el-table-column label="上课时间" align="center">
               <template slot-scope="scope">
                 {{ scope.row.courseTime }}
+              </template>
+            </el-table-column>
+            <el-table-column v-if="percentageShow" label="选课百分比" align="center">
+              <template slot-scope="scope">
+                <div v-if="!editPercentageOrNot[scope.row.courseCode]" @click="editPercentage(scope)">
+                  {{ scope.row.percentage }}
+                </div>
+                <el-input
+                  v-if="editPercentageOrNot[scope.row.courseCode]"
+                  v-model="percentageList[scope.row.courseCode]"
+                  type="number"
+                  :placeholder="'最大值为'+percentageLeft"
+                  @blur="hiddenEdit(scope)"
+                />
               </template>
             </el-table-column>
             <el-table-column label="选项" align="center">
@@ -62,6 +84,7 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-button @click.native.prevent="modifyPercentage()">修改选课</el-button>
         </el-tab-pane>
         <el-tab-pane label="选课课表查看">
           <table border="1" cellspacing="0" width="800px" height="600px">
@@ -77,7 +100,7 @@
               </tr>
               <tr v-for="(count, rows) in weekCourses" :key="rows">
                 <td v-for="(weekday, cols) in weekCourses" :key="cols" width="100px" height="80px">
-                  {{ weekCourses[rows][cols] }}
+                  <div v-html="weekCourses[rows][cols]" />
                 </td>
               </tr>
             </tbody>
@@ -92,8 +115,14 @@
 import { mapGetters } from 'vuex'
 const classCount = ['1-2', '3-4', '5-6', '7-8', '9-11']
 export default {
+  inject: ['reload'],
   data() {
     return {
+      percentageShow: '',
+      percentageLeft: 100,
+      percentageList: {},
+      editPercentageOrNot: {},
+      modifyPercentageList: [],
       list: [],
       Timetable: {
         weekdays: [
@@ -172,8 +201,19 @@ export default {
       }
     },
     getCourses() {
+      var that = this
+      var hasState = Boolean(false)
       this.$store.dispatch('user/getCourses', this.code).then(response => {
         this.list = response.data
+        this.list.every(c => {
+          hasState = c.courseState === '等待结果'
+          return hasState !== true
+        })
+        this.percentageShow = hasState
+        response.data.forEach(c => {
+          that.percentageLeft -= c.percentage
+        })
+        console.log(this.list)
       })
     },
     courseFilter() {
@@ -199,14 +239,54 @@ export default {
         for (var i = 1; i <= 5; i++) {
           for (var j = 1; j <= 7; j++) {
             if (hasWeek && weekdays.indexOf(that.weekCourses[0][j]) !== -1 && courseCount === that.weekCourses[i][0]) {
-              that.weekCourses[i][j] = course.courseName
+              // that.weekCourses[i][j] = course.courseName
+              var htmltxt = ''
+              if (course.courseState === '等待结果' || course.courseState === '未中签1') {
+                htmltxt = '<span style="color:orange;">' + course.courseName + '</span>'
+              } else if (course.courseState === '未中签2') {
+                htmltxt = '<span style="color:red;">' + course.courseName + '</span>'
+              } else {
+                htmltxt = '<span style="color:black;">' + course.courseName + '</span>'
+              }
+              that.weekCourses[i][j] = htmltxt
             }
           }
         }
       })
     },
+    editPercentage(scope) {
+      this.percentageLeft += scope.row.percentage
+      this.editPercentageOrNot[scope.row.courseCode] = true
+    },
+    hiddenEdit(scope) {
+      console.log(this.percentageList[scope.row.courseCode])
+      this.editPercentageOrNot[scope.row.courseCode] = false
+      if (this.percentageList[scope.row.courseCode] !== undefined) {
+        this.percentageLeft -= this.percentageList[scope.row.courseCode]
+        scope.row.percentage = this.percentageList[scope.row.courseCode]
+      }
+    },
+    modifyPercentage() {
+      var that = this
+      if (this.percentageLeft >= 0) {
+        this.list.forEach(c => {
+          this.modifyPercentageList.push({
+            CourseCode: c.courseCode,
+            UserCode: that.code,
+            Percentage: c.percentage
+          })
+        })
+        this.$store.dispatch('user/modifyPercentage', this.modifyPercentageList).then(response => {
+          that.reload()
+        })
+      }
+    },
     deleteCourse(courseCode) {
-      console.log(courseCode)
+      var that = this
+      const data = { courseCode: courseCode, userCode: this.code }
+      this.$store.dispatch('user/deleteCourse', data).then(response => {
+        that.reload()
+      })
     },
     diminishing() {
       var moment = require('moment')
