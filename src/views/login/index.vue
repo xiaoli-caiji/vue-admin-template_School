@@ -77,11 +77,11 @@ export default {
     }
     return {
       loginForm: {
-        UserName: 'OT0004',
+        UserName: '202022010101',
         ClientId: 'ro.client',
         ClientSecrets: 'secret',
         GrantType: 'password',
-        Password: '528982'
+        Password: '230291'
       },
       checkVlue: false,
       loginRules: {

@@ -93,11 +93,20 @@
       </el-table-column>
       <el-table-column label="选课百分比" align="center">
         <template slot-scope="scope">
-          <div v-if="scope.row.choosenOrNot === '已选'">
+          <span v-if="scope.row.courseState === '等待结果' || scope.row.courseState === '中签1'">
             {{ scope.row.percentage }}
-          </div>
+          </span>
+          <span v-else-if="scope.row.courseState === '未中签1'">
+            {{ '第一轮未中签' }}
+          </span>
+          <span v-else-if="scope.row.courseState === '中签2'">
+            {{ ' ' }}
+          </span>
+          <span v-else-if="scope.row.courseChoosenRounds !== null">
+            {{ '未参与第一轮或第一轮中签已删除' }}
+          </span>
           <el-input
-            v-if="scope.row.choosenOrNot === '未选'"
+            v-if="scope.row.choosenOrNot === '未选' && scope.row.courseChoosenRounds === null"
             v-model="percentage[scope.row.courseCode]"
             type="number"
             :disabled="scope.row.percentageLeft===0?true:false"
@@ -107,13 +116,19 @@
       </el-table-column>
       <el-table-column label="选项" align="center">
         <template slot-scope="scope">
-          <span v-if="scope.row.choosenOrNot === '已选'">
-            <el-button type="text" disabled>已选</el-button>
+          <span v-if="scope.row.courseState === '等待结果'">
+            <el-button type="text" disabled>已选等待第一轮结果</el-button>
           </span>
-          <span v-else-if="scope.row.choosenOrNot === '未选' && scope.row.percentageLeft === 0">
+          <span v-else-if="scope.row.courseState === null && scope.row.percentageLeft === 0 && scope.row.courseChoosenRounds === null">
             <el-button @click="gotoCourseChoosenList()">去管理选课</el-button>
           </span>
-          <span v-else>
+          <span v-else-if="scope.row.courseState === '中签1' || scope.row.courseState === '中签2'">
+            <el-button type="text" disabled>已中签</el-button>
+          </span>
+          <span v-else-if="scope.row.courseState === null && scope.row.courseChoosenRounds === '1'">
+            <el-button type="text" disabled>请等待第二轮选课开启</el-button>
+          </span>
+          <span v-else-if="scope.row.courseChoosenRounds === null || scope.row.courseChoosenRounds === '2' && scope.row.coursecCapacity - scope.row.courseSelectionNumber !== 0">
             <el-button :id="scope.row.courseCode" @click.native.prevent="chooseCourse(scope)">选课</el-button>
           </span>
         </template>
@@ -177,9 +192,10 @@ export default {
       this.courseCode = scope.row.courseCode
       this.loading = true
       this.buttonLoading = true
+      var roundTwoTime = new Date()
       var obj = document.getElementById(scope.row.courseCode)
-      if (this.percentage[scope.row.courseCode] <= scope.row.percentageLeft && this.percentage[scope.row.courseCode] >= 1) {
-        const data = { CourseCode: this.courseCode, UserCode: this.code, Percentage: this.percentage[this.courseCode] }
+      if (this.percentage[scope.row.courseCode] <= scope.row.percentageLeft && this.percentage[scope.row.courseCode] >= 1 || scope.row.courseState !== null || scope.row.courseChoosenRounds !== null) {
+        const data = { CourseCode: this.courseCode, UserCode: this.code, Percentage: this.percentage[this.courseCode], RoundTwoTime: roundTwoTime }
         this.$store.dispatch('user/chooseCourse', data).then(response => {
           if (response.type === 200) {
             obj.type = Text

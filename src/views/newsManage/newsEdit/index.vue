@@ -22,12 +22,12 @@
       </el-form-item>
       <el-form-item label="展示时间" prop="NewsStartTime">
         <el-col :span="11">
-          <el-date-picker ref="NewsStartTime" v-model="form.NewsStartTime" type="date" value-format="yyyy-MM-dd" name="NewsStartTime" placeholder="选择开始时间" style="width: 100%;" />
+          <el-date-picker ref="NewsStartTime" v-model="form.NewsStartTime" :picker-options="startTime" type="date" value-format="yyyy-MM-dd" name="NewsStartTime" placeholder="选择开始时间" style="width: 100%;" @change="setStartTime" />
         </el-col>
         <el-col :span="2" class="line">-</el-col>
         <el-col :span="11" prop="NewsEndTime">
           <el-form-item prop="NewsEndTime">
-            <el-date-picker v-model="form.NewsEndTime" type="date" value-format="yyyy-MM-dd" placeholder="选择结束时间" style="width: 100%;" />
+            <el-date-picker v-model="form.NewsEndTime" :picker-options="endTime" type="date" value-format="yyyy-MM-dd" placeholder="选择结束时间" style="width: 100%;" />
           </el-form-item>
         </el-col>
       </el-form-item>
@@ -101,7 +101,15 @@ export default {
       dto: new FormData(),
       content: '',
       exist: false,
-      historyCover: ''
+      historyCover: '',
+      startTime: {
+        disabledDate: (time1) => {
+          var nowDate = new Date()
+          nowDate = new Date(nowDate.setDate(nowDate.getDate() - 1))
+          return time1 < nowDate
+        }
+      },
+      endTime: this.endTimeSet()
     }
   },
   computed: {
@@ -144,13 +152,29 @@ export default {
           document.getElementById('addPicture').style.display = 'none'
           document.getElementById('historyCover').style.display = 'none'
         }
-        that.form.NewsUploadHistoryTime = that.currentNews.newsWriteTime
+        var t = that.currentNews.newsWriteTime
+        var index = t.indexOf('T')
+        t = t.replace(t.substring(index, index + 1), '\u00a0')
+        that.form.NewsUploadHistoryTime = t
         // 网址后面加随机数解决浏览器的缓存效果，实时获取最新数据
         this.content = this.currentNews.newsContent
         // this.$http.get('https://localhost:13001/' + that.currentNews.newsContentAddress + '?num=' + Math.random()).then(response => {
         //   console.log(response)
         //   that.content = response.body
         // })
+      }
+    },
+    endTimeSet() {
+      var that = this
+      return {
+        disabledDate(time) {
+          var sTime = new Date(that.form.NewsStartTime)
+          if (sTime) {
+            return time < new Date(sTime.setDate(sTime.getDate()))
+          } else {
+            return time < new Date().getTime()
+          }
+        }
       }
     },
     fileChange(file, fileList) {

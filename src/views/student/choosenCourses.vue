@@ -52,7 +52,10 @@
                   {{ '未中签' }}
                 </span>
                 <span v-else-if="scope.row.courseState === '等待结果'">
-                  {{ '等待结果' }}
+                  {{ '等待第一轮结果' }}
+                </span>
+                <span v-else-if="scope.row.courseState === '等待结果2'">
+                  {{ '等待第二轮结果' }}
                 </span>
                 <span v-else>
                   {{ '中签' }}
@@ -64,38 +67,44 @@
                 {{ scope.row.courseTime }}
               </template>
             </el-table-column>
-            <el-table-column v-if="percentageShow" label="选课百分比" align="center">
+            <el-table-column label="选课百分比" align="center">
               <template slot-scope="scope">
                 <div v-if="!editPercentageOrNot[scope.row.courseCode]" @click="editPercentage(scope)">
                   {{ scope.row.percentage }}
                 </div>
                 <el-input
                   v-if="editPercentageOrNot[scope.row.courseCode]"
-                  v-model="percentageList[scope.row.courseCode]"
+                  :key="scope.row.courseCode"
+                  :ref="'ipt'+scope.row.courseCode"
+                  v-model="scope.row.percentage"
                   type="number"
                   :placeholder="'最大值为'+percentageLeft"
+                  @change="countPercentage(scope)"
                   @blur="hiddenEdit(scope)"
                 />
               </template>
             </el-table-column>
             <el-table-column label="选项" align="center">
               <template slot-scope="scope">
-                <el-button :id="scope.row.courseCode" @click.native.prevent="deleteCourse(scope.row.courseCode)">删除选课</el-button>
+                <el-button v-if="scope.row.courseState.indexOf('未') === -1" @click.native.prevent="deleteCourse(scope.row.courseCode)">删除选课</el-button>
               </template>
             </el-table-column>
           </el-table>
-          <el-button @click.native.prevent="modifyPercentage()">修改选课</el-button>
+          <el-button v-if="percentageShow" @click.native.prevent="modifyPercentage()">修改选课</el-button>
         </el-tab-pane>
         <el-tab-pane label="选课课表查看">
           <table border="1" cellspacing="0" width="800px" height="600px">
             <tbody>
               <tr>
                 <td colspan="8" position="fixed">
-                  <span>
+                  <div>
                     <svg-icon icon-class="左箭头" @click="diminishing" />
                     {{ topTitle }}
                     <svg-icon icon-class="右箭头" @click="increasing" />
-                  </span>
+                  </div>
+                  <div style="font-size:15px;color:red;line-height:5">
+                    {{ '注：黑色表示已中签，橙色表示等待结果或者第一轮未中签，红色表示未中签' }}
+                  </div>
                 </td>
               </tr>
               <tr v-for="(count, rows) in weekCourses" :key="rows">
@@ -118,7 +127,8 @@ export default {
   inject: ['reload'],
   data() {
     return {
-      percentageShow: '',
+      percentageShow: {},
+      nowPercent: 0,
       percentageLeft: 100,
       percentageList: {},
       editPercentageOrNot: {},
@@ -202,14 +212,21 @@ export default {
     },
     getCourses() {
       var that = this
-      var hasState = Boolean(false)
       this.$store.dispatch('user/getCourses', this.code).then(response => {
         this.list = response.data
-        this.list.every(c => {
-          hasState = c.courseState === '等待结果'
-          return hasState !== true
-        })
-        this.percentageShow = hasState
+        console.log(this.list)
+        // var hasState = Boolean(true)
+        // 只要有一个课程的状态不是等待结果，就表示第一轮选课开始
+        // 这时任何课程的百分比都不能被修改
+        // this.list.every(c => {
+        //   hasState = c.courseState === '等待结果'
+        //   return hasState !== true
+        // })
+        // if (hasState === true) {
+        //   this.list.forEach(c => {
+        //     that.editPercentageOrNot[c.courseCode] = false
+        //   })
+        // }
         response.data.forEach(c => {
           that.percentageLeft -= c.percentage
         })
@@ -255,11 +272,17 @@ export default {
       })
     },
     editPercentage(scope) {
+      this.nowPercent = scope.row.percentage
       this.percentageLeft += scope.row.percentage
-      this.editPercentageOrNot[scope.row.courseCode] = true
+      this.editPercentageOrNot = {}
+      if (scope.row.courseState === '等待结果') {
+        this.editPercentageOrNot[scope.row.courseCode] = true
+      }
+    },
+    countPercentage(scope) {
+      this.percentageLeft -= scope.row.percentage
     },
     hiddenEdit(scope) {
-      console.log(this.percentageList[scope.row.courseCode])
       this.editPercentageOrNot[scope.row.courseCode] = false
       if (this.percentageList[scope.row.courseCode] !== undefined) {
         this.percentageLeft -= this.percentageList[scope.row.courseCode]

@@ -135,6 +135,13 @@ export function winCourse(data) {
   })
 }
 
+export function courseSelectionClose() {
+  return request({
+    url: '/api/TeacherIndex/CourseSelectionClose',
+    method: 'post'
+  })
+}
+
 export function getStudentAndCourse(urll) {
   return request({
     url: urll,

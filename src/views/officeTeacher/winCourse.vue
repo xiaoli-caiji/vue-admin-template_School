@@ -55,7 +55,12 @@
             </el-table-column>
             <el-table-column :label="chooseRounds === '1'?'选课人数':'剩余名额'" align="center" width="75px">
               <template slot-scope="scope">
-                {{ scope.row.courseChoosenNumber }}
+                <span v-if="chooseRounds === '1'">
+                  {{ scope.row.courseChoosenNumber }}
+                </span>
+                <span v-else>
+                  {{ scope.row.courseCapacity - scope.row.courseSelectionNumber }}
+                </span>
               </template>
             </el-table-column>
             <el-table-column label="中签人数" align="center" width="75px">
@@ -69,7 +74,7 @@
                   {{ '等待开启选课' }}
                 </span>
                 <span v-else-if="chooseRounds === null">
-                  {{ '选课已结束' }}
+                  {{ '第二轮选课进行中' }}
                 </span>
                 <span v-else>
                   {{ scope.row.courseState }}
@@ -78,6 +83,7 @@
             </el-table-column>
           </el-table>
           <el-button v-if="chooseRounds !== null" :disabled="courseSelectionOpenList.length!==0?false:true" @click="courseSelectionOpen()">开启选课</el-button>
+          <el-button v-if="chooseRounds === null" @click="courseSelectionClose()">关闭所有选课</el-button>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -99,7 +105,7 @@ export default {
       courseListRounds: [
         '第一轮选课',
         '第二轮选课',
-        '选课已结束'
+        '第二轮选课进行中'
       ],
       chooseRounds: '第一轮选课',
       courseSelectionOpenList: []
@@ -133,7 +139,7 @@ export default {
           that.courseList = that.courseListRoundTwo
           that.chooseRounds = '2'
           break
-        case '选课已结束':
+        case '第二轮选课进行中':
           that.courseList = that.courseListRoundEnd
           that.chooseRounds = null
           break
@@ -153,10 +159,15 @@ export default {
       const data = { ChooseRounds: this.chooseRounds, CourseCode: this.courseSelectionOpenList }
       this.$store.dispatch('user/winCourse', data).then(response => {
         for (var i = 0; i < this.courseList.length; i++) {
-          if (response.data[i] === '课程筛选完成！') {
+          if (response.data[i] === '课程筛选完成！' || response.data[i] === '课程筛选失败！请重试！') {
             this.courseList[i].courseState = response.data[i]
           }
         }
+        this.reload()
+      })
+    },
+    courseSelectionClose() {
+      this.$store.dispatch('user/courseSelectionClose').then(response => {
         this.reload()
       })
     }

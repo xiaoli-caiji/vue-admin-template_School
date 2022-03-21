@@ -1,6 +1,6 @@
 import { login, logout, getInfo, selfSetting, getUnits, deleteCourse, modifyPercentage, winCourse, getCoursesByTeacher } from '@/api/user'
 import { studentRegistration, teachingTeacherRegistration, otherStuffRegistration, officeTeacherRegistration } from '@/api/user'
-import { browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse, getCourses } from '@/api/user'
+import { browseCourse, chooseCourse, getReportCard, writeInReportCard, getStudentAndCourse, getCourses, courseSelectionClose } from '@/api/user'
 import { getNewsTypes, newsSave, getNews, showNews, newsEdit } from '@/api/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
@@ -204,9 +204,18 @@ const actions = {
   },
 
   winCourse({ commit }, data) {
-    console.log(data)
     return new Promise((resolve, reject) => {
       winCourse(data).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  courseSelectionClose({ commit }) {
+    return new Promise((resolve, reject) => {
+      courseSelectionClose().then(response => {
         resolve(response)
       }).catch(error => {
         reject(error)
